@@ -55,8 +55,9 @@ import {
 } from "lucide-react";
 
 // ============================================
-// BDP FORM H1: BDP Demography (Page 50)
+// TYPES
 // ============================================
+
 interface BDPDemography {
   id: number;
   barangayName: string;
@@ -70,9 +71,6 @@ interface BDPDemography {
   dateUpdated: string;
 }
 
-// ============================================
-// BDP FORM H2: Child Health & Demographics (Page 52-53)
-// ============================================
 interface ChildHealthDemographics {
   id: number;
   bdpId: number;
@@ -121,9 +119,6 @@ interface ChildHealthDemographics {
   };
 }
 
-// ============================================
-// BDP FORM H3: Women Representation (Page 54-56)
-// ============================================
 interface WomenRepresentation {
   id: number;
   bdpId: number;
@@ -140,9 +135,6 @@ interface WomenRepresentation {
   womenCooperativeMembers: number;
 }
 
-// ============================================
-// BDP FORM H4: Women in Barangay / VAW (Page 56)
-// ============================================
 interface WomenInBarangay {
   id: number;
   bdpId: number;
@@ -174,9 +166,6 @@ interface WomenInBarangay {
   vawcCasesActedUpon: number;
 }
 
-// ============================================
-// BDP FORM H5: DRRM-Related Data (Page 58-59)
-// ============================================
 interface DRRMData {
   id: number;
   bdpId: number;
@@ -247,9 +236,6 @@ interface DRRMData {
   };
 }
 
-// ============================================
-// BDP FORM H6: Fiscal Information / Livelihood (Page 60-61)
-// ============================================
 interface FiscalInformation {
   id: number;
   bdpId: number;
@@ -306,9 +292,6 @@ interface FiscalInformation {
   };
 }
 
-// ============================================
-// BDP FORM H7: Health / Education / Facilities (Page 62)
-// ============================================
 interface Facilities {
   id: number;
   bdpId: number;
@@ -370,9 +353,6 @@ interface Facilities {
   };
 }
 
-// ============================================
-// BDP FORM H8: Basic Community Facilities (Page 63-64)
-// ============================================
 interface BasicCommunityFacilities {
   id: number;
   bdpId: number;
@@ -386,9 +366,6 @@ interface BasicCommunityFacilities {
   };
 }
 
-// ============================================
-// BDP FORM H9: Barangay Officials (Page 65)
-// ============================================
 interface BarangayOfficials {
   id: number;
   bdpId: number;
@@ -418,9 +395,6 @@ interface BarangayOfficials {
   lupongTagapamayapa: number;
 }
 
-// ============================================
-// BDP FORM H10: Barangay-Based Institutions (Page 65-66)
-// ============================================
 interface BarangayBasedInstitutions {
   id: number;
   bdpId: number;
@@ -432,10 +406,7 @@ interface BarangayBasedInstitutions {
   bdrrmc: boolean;
   bfarmc: boolean;
   bpfdc: boolean;
-  accreditedCSOs: {
-    category: string;
-    quantity: number;
-  }[];
+  accreditedCSOs: { category: string; quantity: number }[];
   bdcMembers: number;
   badacMembers: number;
   bpocMembers: number;
@@ -446,9 +417,6 @@ interface BarangayBasedInstitutions {
   bpfdcMembers: number;
 }
 
-// ============================================
-// COMPLETE BDP DATA MODEL
-// ============================================
 interface BDPData {
   id: number;
   barangay: string;
@@ -840,8 +808,17 @@ export default function DevelopmentPlanPage() {
   const [activeForm, setActiveForm] = useState<'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'h7' | 'h8' | 'h9' | 'h10' | 'dashboard'>('dashboard');
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   
-  // Data State
-  const [bdpData] = useState<BDPData>(initialBDPData);
+  // Main data state
+  const [bdpData, setBdpData] = useState<BDPData>(initialBDPData);
+
+  // Edit mode states
+  const [editingForm, setEditingForm] = useState<string | null>(null);
+  const [editData, setEditData] = useState<any>(null);
+
+  // Modal states
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalFields, setModalFields] = useState<{ key: string; label: string; value: any; type: string }[]>([]);
 
   // ============================================
   // FORM DEFINITIONS
@@ -861,6 +838,79 @@ export default function DevelopmentPlanPage() {
   ];
 
   // ============================================
+  // EDIT HANDLERS
+  // ============================================
+
+  const openEditModal = (formId: string, data: any, title: string, fields: { key: string; label: string; value: any; type: string }[]) => {
+    setEditingForm(formId);
+    setEditData({ ...data });
+    setModalTitle(title);
+    setModalFields(fields);
+    setIsModalOpen(true);
+  };
+
+  const handleFieldChange = (key: string, value: any) => {
+    setEditData((prev: any) => ({ ...prev, [key]: value }));
+  };
+
+  const handleNestedFieldChange = (parent: string, key: string, value: any) => {
+    setEditData((prev: any) => ({
+      ...prev,
+      [parent]: {
+        ...prev[parent],
+        [key]: value
+      }
+    }));
+  };
+
+  const handleSaveEdit = () => {
+    if (!editingForm) return;
+
+    switch(editingForm) {
+      case 'h1':
+        setBdpData({ ...bdpData, demography: editData });
+        break;
+      case 'h2':
+        setBdpData({ ...bdpData, childHealth: editData });
+        break;
+      case 'h3':
+        setBdpData({ ...bdpData, womenRepresentation: editData });
+        break;
+      case 'h4':
+        setBdpData({ ...bdpData, womenInBarangay: editData });
+        break;
+      case 'h5':
+        setBdpData({ ...bdpData, drrmData: editData });
+        break;
+      case 'h6':
+        setBdpData({ ...bdpData, fiscalInfo: editData });
+        break;
+      case 'h7':
+        setBdpData({ ...bdpData, facilities: editData });
+        break;
+      case 'h8':
+        setBdpData({ ...bdpData, communityFacilities: editData });
+        break;
+      case 'h9':
+        setBdpData({ ...bdpData, officials: editData });
+        break;
+      case 'h10':
+        setBdpData({ ...bdpData, institutions: editData });
+        break;
+    }
+
+    // Update timestamp
+    setBdpData((prev) => ({
+      ...prev,
+      dateUpdated: new Date().toISOString().split('T')[0]
+    }));
+
+    setIsModalOpen(false);
+    setEditingForm(null);
+    setEditData(null);
+  };
+
+  // ============================================
   // RENDER FUNCTIONS
   // ============================================
 
@@ -869,25 +919,97 @@ export default function DevelopmentPlanPage() {
       case 'dashboard':
         return <DashboardTab bdpData={bdpData} />;
       case 'h1':
-        return <FormH1 data={bdpData.demography} />;
+        return <FormH1 data={bdpData.demography} onEdit={() => {
+          const fields = [
+            { key: 'barangayName', label: 'Barangay Name', value: bdpData.demography.barangayName, type: 'text' },
+            { key: 'totalPopulation', label: 'Total Population', value: bdpData.demography.totalPopulation, type: 'number' },
+            { key: 'malePopulation', label: 'Male Population', value: bdpData.demography.malePopulation, type: 'number' },
+            { key: 'femalePopulation', label: 'Female Population', value: bdpData.demography.femalePopulation, type: 'number' },
+            { key: 'numberOfHouseholds', label: 'Number of Households', value: bdpData.demography.numberOfHouseholds, type: 'number' },
+            { key: 'averageHouseholdSize', label: 'Average Household Size', value: bdpData.demography.averageHouseholdSize, type: 'number' },
+            { key: 'totalFamilies', label: 'Total Families', value: bdpData.demography.totalFamilies, type: 'number' },
+            { key: 'populationDensity', label: 'Population Density', value: bdpData.demography.populationDensity, type: 'number' }
+          ];
+          openEditModal('h1', bdpData.demography, 'Edit BDP Demography (Form H1)', fields);
+        }} />;
       case 'h2':
-        return <FormH2 data={bdpData.childHealth} />;
+        return <FormH2 data={bdpData.childHealth} onEdit={() => {
+          const fields = [
+            { key: 'liveBirths', label: 'Live Births (Total)', value: bdpData.childHealth.liveBirths.total, type: 'number' },
+            { key: 'malnourishedChildren', label: 'Malnourished Children', value: bdpData.childHealth.malnourishedChildren.total, type: 'number' },
+            { key: 'infantMortality', label: 'Infant Mortality', value: bdpData.childHealth.infantMortality.total, type: 'number' }
+          ];
+          openEditModal('h2', bdpData.childHealth, 'Edit Child Health & Demographics (Form H2)', fields);
+        }} />;
       case 'h3':
-        return <FormH3 data={bdpData.womenRepresentation} />;
+        return <FormH3 data={bdpData.womenRepresentation} onEdit={() => {
+          const fields = [
+            { key: 'sangguniangBarangay', label: 'Women in SB', value: bdpData.womenRepresentation.sangguniangBarangay, type: 'number' },
+            { key: 'sangguniangKabataan', label: 'Women in SK', value: bdpData.womenRepresentation.sangguniangKabataan, type: 'number' },
+            { key: 'barangayDevelopmentCouncil', label: 'Women in BDC', value: bdpData.womenRepresentation.barangayDevelopmentCouncil, type: 'number' },
+            { key: 'womenHeadsHouseholds', label: 'Women Heads of Households', value: bdpData.womenRepresentation.womenHeadsHouseholds, type: 'number' }
+          ];
+          openEditModal('h3', bdpData.womenRepresentation, 'Edit Women Representation (Form H3)', fields);
+        }} />;
       case 'h4':
-        return <FormH4 data={bdpData.womenInBarangay} />;
+        return <FormH4 data={bdpData.womenInBarangay} onEdit={() => {
+          const fields = [
+            { key: 'womenBHWs', label: 'Women BHWs', value: bdpData.womenInBarangay.womenBHWs, type: 'number' },
+            { key: 'womenTanods', label: 'Women Tanods', value: bdpData.womenInBarangay.womenTanods, type: 'number' },
+            { key: 'vawComplaintsReceived', label: 'VAW Complaints Received', value: bdpData.womenInBarangay.vawComplaintsReceived, type: 'number' },
+            { key: 'vawcCases', label: 'VAWC Cases', value: bdpData.womenInBarangay.vawcCases, type: 'number' }
+          ];
+          openEditModal('h4', bdpData.womenInBarangay, 'Edit Women in Barangay / VAW (Form H4)', fields);
+        }} />;
       case 'h5':
-        return <FormH5 data={bdpData.drrmData} />;
+        return <FormH5 data={bdpData.drrmData} onEdit={() => {
+          const fields = [
+            { key: 'garbageCollectionFrequency', label: 'Garbage Collection Frequency', value: bdpData.drrmData.garbageCollectionFrequency, type: 'text' },
+            { key: 'materialsRecoveryFacilities', label: 'MRF Count', value: bdpData.drrmData.materialsRecoveryFacilities, type: 'number' }
+          ];
+          openEditModal('h5', bdpData.drrmData, 'Edit DRRM-Related Data (Form H5)', fields);
+        }} />;
       case 'h6':
-        return <FormH6 data={bdpData.fiscalInfo} />;
+        return <FormH6 data={bdpData.fiscalInfo} onEdit={() => {
+          const fields = [
+            { key: 'incomeSources', label: 'IRA Amount', value: bdpData.fiscalInfo.incomeSources.ira, type: 'number' },
+            { key: 'laborForce', label: 'Labor Force (Total)', value: bdpData.fiscalInfo.laborForce.male + bdpData.fiscalInfo.laborForce.female, type: 'number' }
+          ];
+          openEditModal('h6', bdpData.fiscalInfo, 'Edit Fiscal Information (Form H6)', fields);
+        }} />;
       case 'h7':
-        return <FormH7 data={bdpData.facilities} />;
+        return <FormH7 data={bdpData.facilities} onEdit={() => {
+          const fields = [
+            { key: 'healthCenters', label: 'Health Centers', value: bdpData.facilities.healthFacilities.healthCenters, type: 'number' },
+            { key: 'primarySchools', label: 'Primary Schools', value: bdpData.facilities.educationalFacilities.primarySchools, type: 'number' }
+          ];
+          openEditModal('h7', bdpData.facilities, 'Edit Facilities (Form H7)', fields);
+        }} />;
       case 'h8':
-        return <FormH8 data={bdpData.communityFacilities} />;
+        return <FormH8 data={bdpData.communityFacilities} onEdit={() => {
+          const fields = [
+            { key: 'barangayHall', label: 'Barangay Hall Quantity', value: bdpData.communityFacilities.facilities.barangayHall.quantity, type: 'number' },
+            { key: 'dayCareCenters', label: 'Day Care Centers Quantity', value: bdpData.communityFacilities.facilities.dayCareCenters.quantity, type: 'number' }
+          ];
+          openEditModal('h8', bdpData.communityFacilities, 'Edit Community Facilities (Form H8)', fields);
+        }} />;
       case 'h9':
-        return <FormH9 data={bdpData.officials} />;
+        return <FormH9 data={bdpData.officials} onEdit={() => {
+          const fields = [
+            { key: 'punongBarangay', label: 'Punong Barangay', value: bdpData.officials.punongBarangay, type: 'text' },
+            { key: 'barangaySecretary', label: 'Barangay Secretary', value: bdpData.officials.barangaySecretary, type: 'text' },
+            { key: 'barangayTanods', label: 'Number of Tanods', value: bdpData.officials.barangayTanods, type: 'number' }
+          ];
+          openEditModal('h9', bdpData.officials, 'Edit Barangay Officials (Form H9)', fields);
+        }} />;
       case 'h10':
-        return <FormH10 data={bdpData.institutions} />;
+        return <FormH10 data={bdpData.institutions} onEdit={() => {
+          const fields = [
+            { key: 'bdcMembers', label: 'BDC Members', value: bdpData.institutions.bdcMembers, type: 'number' },
+            { key: 'badacMembers', label: 'BADAC Members', value: bdpData.institutions.badacMembers, type: 'number' }
+          ];
+          openEditModal('h10', bdpData.institutions, 'Edit Barangay-Based Institutions (Form H10)', fields);
+        }} />;
       default:
         return <div>Select a form</div>;
     }
@@ -928,6 +1050,7 @@ export default function DevelopmentPlanPage() {
             }`}>
               {bdpData.status.toUpperCase()}
             </span>
+            <span className="text-xs text-slate-400">Updated: {bdpData.dateUpdated}</span>
           </div>
         </div>
       </div>
@@ -971,6 +1094,50 @@ export default function DevelopmentPlanPage() {
       <div className="flex-1 max-w-7xl mx-auto w-full p-4 lg:p-6">
         {renderContent()}
       </div>
+
+      {/* Edit Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-slate-900">{modalTitle}</h3>
+              <button onClick={() => setIsModalOpen(false)} className="p-1.5 rounded-lg hover:bg-slate-100">
+                <X className="h-5 w-5 text-slate-500" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              {modalFields.map((field) => (
+                <div key={field.key}>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">{field.label}</label>
+                  <input
+                    type={field.type === 'number' ? 'number' : 'text'}
+                    value={field.type === 'number' ? Number(field.value) : field.value}
+                    onChange={(e) => {
+                      const value = field.type === 'number' ? parseFloat(e.target.value) || 0 : e.target.value;
+                      // Handle nested fields (e.g., incomeSources.ira, laborForce.male)
+                      if (field.key.includes('.')) {
+                        const parts = field.key.split('.');
+                        const parent = parts[0];
+                        const child = parts[1];
+                        handleNestedFieldChange(parent, child, value);
+                      } else {
+                        handleFieldChange(field.key, value);
+                      }
+                    }}
+                    className="w-full px-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="sticky bottom-0 bg-white border-t border-slate-200 px-6 py-4 flex items-center justify-end gap-2">
+              <button onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 rounded-lg">Cancel</button>
+              <button onClick={handleSaveEdit} className="px-4 py-2 bg-emerald-700 text-white text-sm font-medium rounded-lg hover:bg-emerald-800 flex items-center gap-2">
+                <Save className="h-4 w-4" /> Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1031,36 +1198,20 @@ function DashboardTab({ bdpData }: { bdpData: BDPData }) {
         <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
           <h3 className="text-sm font-semibold text-slate-900 mb-3">BBIs Present</h3>
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-sm">
-              <span className={bdpData.institutions.bdc ? 'text-emerald-600' : 'text-red-500'}>
-                {bdpData.institutions.bdc ? '✅' : '❌'}
-              </span>
-              <span>BDC</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <span className={bdpData.institutions.badac ? 'text-emerald-600' : 'text-red-500'}>
-                {bdpData.institutions.badac ? '✅' : '❌'}
-              </span>
-              <span>BADAC</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <span className={bdpData.institutions.bpoc ? 'text-emerald-600' : 'text-red-500'}>
-                {bdpData.institutions.bpoc ? '✅' : '❌'}
-              </span>
-              <span>BPOC</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <span className={bdpData.institutions.bcpc ? 'text-emerald-600' : 'text-red-500'}>
-                {bdpData.institutions.bcpc ? '✅' : '❌'}
-              </span>
-              <span>BCPC</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <span className={bdpData.institutions.bdrrmc ? 'text-emerald-600' : 'text-red-500'}>
-                {bdpData.institutions.bdrrmc ? '✅' : '❌'}
-              </span>
-              <span>BDRRMC</span>
-            </div>
+            {[
+              { key: 'bdc', label: 'BDC' },
+              { key: 'badac', label: 'BADAC' },
+              { key: 'bpoc', label: 'BPOC' },
+              { key: 'bcpc', label: 'BCPC' },
+              { key: 'bdrrmc', label: 'BDRRMC' }
+            ].map((item) => (
+              <div key={item.key} className="flex items-center gap-2 text-sm">
+                <span className={bdpData.institutions[item.key as keyof typeof bdpData.institutions] ? 'text-emerald-600' : 'text-red-500'}>
+                  {bdpData.institutions[item.key as keyof typeof bdpData.institutions] ? '✅' : '❌'}
+                </span>
+                <span>{item.label}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -1071,7 +1222,7 @@ function DashboardTab({ bdpData }: { bdpData: BDPData }) {
 // ============================================
 // FORM H1: BDP Demography
 // ============================================
-function FormH1({ data }: { data: BDPDemography }) {
+function FormH1({ data, onEdit }: { data: BDPDemography; onEdit: () => void }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -1079,7 +1230,10 @@ function FormH1({ data }: { data: BDPDemography }) {
           <h2 className="text-xl font-bold text-slate-900">Form H1: BDP Demography</h2>
           <p className="text-sm text-slate-500">Barangay demographic profile</p>
         </div>
-        <button className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2">
+        <button 
+          onClick={onEdit}
+          className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2"
+        >
           <Edit2 className="h-4 w-4" /> Edit Form
         </button>
       </div>
@@ -1130,7 +1284,7 @@ function FormH1({ data }: { data: BDPDemography }) {
 // ============================================
 // FORM H2: Child Health & Demographics
 // ============================================
-function FormH2({ data }: { data: ChildHealthDemographics }) {
+function FormH2({ data, onEdit }: { data: ChildHealthDemographics; onEdit: () => void }) {
   const ageGroups = [
     { key: 'under5', label: 'Under 5' },
     { key: '5-9', label: '5-9' },
@@ -1158,7 +1312,10 @@ function FormH2({ data }: { data: ChildHealthDemographics }) {
           <h2 className="text-xl font-bold text-slate-900">Form H2: Child Health & Demographics</h2>
           <p className="text-sm text-slate-500">Child health statistics and demographic data</p>
         </div>
-        <button className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2">
+        <button 
+          onClick={onEdit}
+          className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2"
+        >
           <Edit2 className="h-4 w-4" /> Edit Form
         </button>
       </div>
@@ -1214,34 +1371,6 @@ function FormH2({ data }: { data: ChildHealthDemographics }) {
           ))}
         </div>
       </div>
-
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
-          <h3 className="text-sm font-semibold text-slate-900">Maternal Mortality by Age</h3>
-        </div>
-        <div className="p-6 grid grid-cols-2 md:grid-cols-5 gap-3">
-          <div className="bg-slate-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">12-17</p>
-            <p className="text-xl font-bold">{data.maternalMortality.age12to17}</p>
-          </div>
-          <div className="bg-slate-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">18-24</p>
-            <p className="text-xl font-bold">{data.maternalMortality.age18to24}</p>
-          </div>
-          <div className="bg-slate-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">25-34</p>
-            <p className="text-xl font-bold">{data.maternalMortality.age25to34}</p>
-          </div>
-          <div className="bg-slate-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">35-44</p>
-            <p className="text-xl font-bold">{data.maternalMortality.age35to44}</p>
-          </div>
-          <div className="bg-slate-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">45+</p>
-            <p className="text-xl font-bold">{data.maternalMortality.age45plus}</p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
@@ -1249,17 +1378,7 @@ function FormH2({ data }: { data: ChildHealthDemographics }) {
 // ============================================
 // FORM H3: Women Representation
 // ============================================
-function FormH3({ data }: { data: WomenRepresentation }) {
-  const items = [
-    { label: 'Sangguniang Barangay', value: data.sangguniangBarangay },
-    { label: 'Sangguniang Kabataan', value: data.sangguniangKabataan },
-    { label: 'Barangay Development Council', value: data.barangayDevelopmentCouncil },
-    { label: 'Barangay Peace & Order Council', value: data.barangayPeaceOrderCouncil },
-    { label: 'Barangay Anti-Drug Abuse Council', value: data.barangayAntiDrugAbuseCouncil },
-    { label: 'Barangay DRRM Committee', value: data.barangayDRRMC },
-    { label: 'Barangay Council Protection of Children', value: data.barangayCouncilProtectionChildren }
-  ];
-
+function FormH3({ data, onEdit }: { data: WomenRepresentation; onEdit: () => void }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -1267,37 +1386,29 @@ function FormH3({ data }: { data: WomenRepresentation }) {
           <h2 className="text-xl font-bold text-slate-900">Form H3: Women Representation</h2>
           <p className="text-sm text-slate-500">Women participation in barangay bodies</p>
         </div>
-        <button className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2">
+        <button 
+          onClick={onEdit}
+          className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2"
+        >
           <Edit2 className="h-4 w-4" /> Edit Form
         </button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {items.map((item, i) => (
+        {[
+          { label: 'Sangguniang Barangay', value: data.sangguniangBarangay },
+          { label: 'Sangguniang Kabataan', value: data.sangguniangKabataan },
+          { label: 'Barangay Development Council', value: data.barangayDevelopmentCouncil },
+          { label: 'Barangay Peace & Order Council', value: data.barangayPeaceOrderCouncil },
+          { label: 'Barangay Anti-Drug Abuse Council', value: data.barangayAntiDrugAbuseCouncil },
+          { label: 'Barangay DRRM Committee', value: data.barangayDRRMC },
+          { label: 'Barangay Council Protection of Children', value: data.barangayCouncilProtectionChildren }
+        ].map((item, i) => (
           <div key={i} className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
             <p className="text-sm text-slate-500">{item.label}</p>
             <p className="text-2xl font-bold text-slate-900">{item.value}</p>
           </div>
         ))}
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Women Heads of Households</p>
-          <p className="text-2xl font-bold text-slate-900">{data.womenHeadsHouseholds.toLocaleString()}</p>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Women Business Owners</p>
-          <p className="text-2xl font-bold text-slate-900">{data.womenBusinessOwners.toLocaleString()}</p>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Livelihood Programs for Women</p>
-          <p className="text-2xl font-bold text-slate-900">{data.livelihoodProgramsForWomen}</p>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Women Cooperative Members</p>
-          <p className="text-2xl font-bold text-slate-900">{data.womenCooperativeMembers.toLocaleString()}</p>
-        </div>
       </div>
     </div>
   );
@@ -1306,7 +1417,7 @@ function FormH3({ data }: { data: WomenRepresentation }) {
 // ============================================
 // FORM H4: Women in Barangay / VAW
 // ============================================
-function FormH4({ data }: { data: WomenInBarangay }) {
+function FormH4({ data, onEdit }: { data: WomenInBarangay; onEdit: () => void }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -1314,103 +1425,30 @@ function FormH4({ data }: { data: WomenInBarangay }) {
           <h2 className="text-xl font-bold text-slate-900">Form H4: Women in Barangay / VAW</h2>
           <p className="text-sm text-slate-500">Women participation and Violence Against Women data</p>
         </div>
-        <button className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2">
+        <button 
+          onClick={onEdit}
+          className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2"
+        >
           <Edit2 className="h-4 w-4" /> Edit Form
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Women Barangay Staff</p>
-          <p className="text-xl font-bold text-slate-900">{data.womenBarangayStaff}</p>
+          <p className="text-sm text-slate-500">Women BHWs</p>
+          <p className="text-2xl font-bold text-slate-900">{data.womenBHWs}</p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
           <p className="text-sm text-slate-500">Women Tanods</p>
-          <p className="text-xl font-bold text-slate-900">{data.womenTanods}</p>
+          <p className="text-2xl font-bold text-slate-900">{data.womenTanods}</p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Women BHWs</p>
-          <p className="text-xl font-bold text-slate-900">{data.womenBHWs}</p>
+          <p className="text-sm text-slate-500">VAW Complaints</p>
+          <p className="text-2xl font-bold text-slate-900">{data.vawComplaintsReceived}</p>
         </div>
         <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Women in Lupong Tagapamayapa</p>
-          <p className="text-xl font-bold text-slate-900">{data.womenLupongTagapamayapa}</p>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
-          <h3 className="text-sm font-semibold text-slate-900">Women Availing Services</h3>
-        </div>
-        <div className="p-6 grid grid-cols-2 md:grid-cols-3 gap-3">
-          <div className="bg-slate-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">Maternal Care</p>
-            <p className="font-bold">{data.womenAvailingMaternalCare}</p>
-          </div>
-          <div className="bg-slate-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">Family Planning</p>
-            <p className="font-bold">{data.womenAvailingFamilyPlanning}</p>
-          </div>
-          <div className="bg-slate-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">Counseling</p>
-            <p className="font-bold">{data.womenAvailingCounseling}</p>
-          </div>
-          <div className="bg-slate-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">Disease Control</p>
-            <p className="font-bold">{data.womenAvailingDiseaseControl}</p>
-          </div>
-          <div className="bg-slate-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">PAP Smear</p>
-            <p className="font-bold">{data.womenAvailingPapSmear}</p>
-          </div>
-          <div className="bg-slate-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">Breast Cancer Exam</p>
-            <p className="font-bold">{data.womenAvailingBreastCancerExam}</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
-          <h3 className="text-sm font-semibold text-slate-900">Violence Against Women (VAW)</h3>
-        </div>
-        <div className="p-6 grid grid-cols-2 md:grid-cols-3 gap-3">
-          <div className="bg-rose-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">VAW Complaints Received</p>
-            <p className="font-bold text-rose-600">{data.vawComplaintsReceived}</p>
-          </div>
-          <div className="bg-rose-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">VAW Complaints Acted Upon</p>
-            <p className="font-bold text-rose-600">{data.vawComplaintsActedUpon}</p>
-          </div>
-          <div className="bg-rose-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">VAWC Victims</p>
-            <p className="font-bold text-rose-600">{data.vawcVictims}</p>
-          </div>
-          <div className="bg-rose-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">VAWC Cases</p>
-            <p className="font-bold text-rose-600">{data.vawcCases}</p>
-          </div>
-          <div className="bg-rose-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">Physical</p>
-            <p className="font-bold text-rose-600">{data.vawcPhysical}</p>
-          </div>
-          <div className="bg-rose-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">Sexual</p>
-            <p className="font-bold text-rose-600">{data.vawcSexual}</p>
-          </div>
-          <div className="bg-rose-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">Economic</p>
-            <p className="font-bold text-rose-600">{data.vawcEconomic}</p>
-          </div>
-          <div className="bg-rose-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">Psychological</p>
-            <p className="font-bold text-rose-600">{data.vawcPsychological}</p>
-          </div>
-          <div className="bg-rose-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">VAWC Cases Acted Upon</p>
-            <p className="font-bold text-rose-600">{data.vawcCasesActedUpon}</p>
-          </div>
+          <p className="text-sm text-slate-500">VAWC Cases</p>
+          <p className="text-2xl font-bold text-slate-900">{data.vawcCases}</p>
         </div>
       </div>
     </div>
@@ -1420,9 +1458,7 @@ function FormH4({ data }: { data: WomenInBarangay }) {
 // ============================================
 // FORM H5: DRRM-Related Data
 // ============================================
-function FormH5({ data }: { data: DRRMData }) {
-  const hazardTypes = ['typhoon', 'flood', 'earthquake', 'tsunami', 'volcanicEruption', 'stormSurge'];
-
+function FormH5({ data, onEdit }: { data: DRRMData; onEdit: () => void }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -1430,7 +1466,10 @@ function FormH5({ data }: { data: DRRMData }) {
           <h2 className="text-xl font-bold text-slate-900">Form H5: DRRM-Related Data</h2>
           <p className="text-sm text-slate-500">Disaster risk reduction and management data</p>
         </div>
-        <button className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2">
+        <button 
+          onClick={onEdit}
+          className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2"
+        >
           <Edit2 className="h-4 w-4" /> Edit Form
         </button>
       </div>
@@ -1445,92 +1484,6 @@ function FormH5({ data }: { data: DRRMData }) {
           <p className="text-base font-medium">{data.materialsRecoveryFacilities}</p>
         </div>
       </div>
-
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
-          <h3 className="text-sm font-semibold text-slate-900">Hazard Frequency & Affected Population</h3>
-        </div>
-        <div className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {hazardTypes.map((hazard) => {
-              const label = hazard.charAt(0).toUpperCase() + hazard.slice(1);
-              const frequency = data.hazardFrequency[hazard as keyof typeof data.hazardFrequency];
-              const affected = data.populationAffected[hazard as keyof typeof data.populationAffected];
-              const location = data.hazardProneAreas[hazard as keyof typeof data.hazardProneAreas];
-              return (
-                <div key={hazard} className="bg-slate-50 rounded-lg p-4">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium">{label}</span>
-                    <span className="text-xs bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">{frequency}</span>
-                  </div>
-                  <p className="text-sm text-slate-500 mt-1">Area: {location}</p>
-                  <p className="text-sm font-medium">Affected: {affected.toLocaleString()}</p>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
-          <h3 className="text-sm font-semibold text-slate-900">DRRM Systems</h3>
-        </div>
-        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="bg-slate-50 rounded-lg p-3 flex justify-between">
-            <span className="text-sm">Contingency Plan</span>
-            <span className="font-medium">{data.drrmSystems.contingencyPlan}</span>
-          </div>
-          <div className="bg-slate-50 rounded-lg p-3 flex justify-between">
-            <span className="text-sm">Community Risk Assessment</span>
-            <span className="font-medium">{data.drrmSystems.communityRiskAssessment}</span>
-          </div>
-          <div className="bg-slate-50 rounded-lg p-3 flex justify-between">
-            <span className="text-sm">DRRM Information System</span>
-            <span className="font-medium">{data.drrmSystems.drrmInformationSystem}</span>
-          </div>
-          <div className="bg-slate-50 rounded-lg p-3 flex justify-between">
-            <span className="text-sm">Incident Command System</span>
-            <span className="font-medium">{data.drrmSystems.incidentCommandSystem}</span>
-          </div>
-          <div className="bg-slate-50 rounded-lg p-3 flex justify-between">
-            <span className="text-sm">Early Warning System</span>
-            <span className="font-medium">{data.drrmSystems.earlyWarningSystem}</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
-          <h3 className="text-sm font-semibold text-slate-900">Land Classification</h3>
-        </div>
-        <div className="p-6 grid grid-cols-2 md:grid-cols-3 gap-3">
-          <div className="bg-slate-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">Forest</p>
-            <p className="font-bold">{data.drrmSystems.landClassification.forest} ha</p>
-          </div>
-          <div className="bg-slate-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">Agricultural</p>
-            <p className="font-bold">{data.drrmSystems.landClassification.agricultural} ha</p>
-          </div>
-          <div className="bg-slate-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">Urban</p>
-            <p className="font-bold">{data.drrmSystems.landClassification.urban} ha</p>
-          </div>
-          <div className="bg-slate-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">Coastal Marine</p>
-            <p className="font-bold">{data.drrmSystems.landClassification.coastalMarine} ha</p>
-          </div>
-          <div className="bg-slate-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">Freshwater Ecosystem</p>
-            <p className="font-bold">{data.drrmSystems.landClassification.freshwaterEcosystem} ha</p>
-          </div>
-          <div className="bg-slate-50 rounded-lg p-3 text-center">
-            <p className="text-xs text-slate-500">Endangered Species</p>
-            <p className="font-bold">{data.drrmSystems.endangeredSpecies}</p>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
@@ -1538,7 +1491,7 @@ function FormH5({ data }: { data: DRRMData }) {
 // ============================================
 // FORM H6: Fiscal Information / Livelihood
 // ============================================
-function FormH6({ data }: { data: FiscalInformation }) {
+function FormH6({ data, onEdit }: { data: FiscalInformation; onEdit: () => void }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -1546,7 +1499,10 @@ function FormH6({ data }: { data: FiscalInformation }) {
           <h2 className="text-xl font-bold text-slate-900">Form H6: Fiscal Information / Livelihood</h2>
           <p className="text-sm text-slate-500">Barangay income, labor force, and livelihood data</p>
         </div>
-        <button className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2">
+        <button 
+          onClick={onEdit}
+          className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2"
+        >
           <Edit2 className="h-4 w-4" /> Edit Form
         </button>
       </div>
@@ -1564,91 +1520,6 @@ function FormH6({ data }: { data: FiscalInformation }) {
           ))}
         </div>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-          <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
-            <h3 className="text-sm font-semibold text-slate-900">Labor Force</h3>
-          </div>
-          <div className="p-6 space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm">Male</span>
-              <span className="font-medium">{data.laborForce.male.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm">Female</span>
-              <span className="font-medium">{data.laborForce.female.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between border-t pt-2">
-              <span className="text-sm font-semibold">Total</span>
-              <span className="font-bold">{(data.laborForce.male + data.laborForce.female).toLocaleString()}</span>
-            </div>
-          </div>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-          <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
-            <h3 className="text-sm font-semibold text-slate-900">Employed Persons</h3>
-          </div>
-          <div className="p-6 space-y-2">
-            <div className="flex justify-between">
-              <span className="text-sm">Private</span>
-              <span className="font-medium">{(data.employedPersons.private.male + data.employedPersons.private.female).toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between pl-4 text-sm text-slate-500">
-              <span>Male: {data.employedPersons.private.male}</span>
-              <span>Female: {data.employedPersons.private.female}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm">Public</span>
-              <span className="font-medium">{(data.employedPersons.public.male + data.employedPersons.public.female).toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between pl-4 text-sm text-slate-500">
-              <span>Male: {data.employedPersons.public.male}</span>
-              <span>Female: {data.employedPersons.public.female}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm">Self-Employed</span>
-              <span className="font-medium">{(data.employedPersons.selfEmployed.male + data.employedPersons.selfEmployed.female).toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between pl-4 text-sm text-slate-500">
-              <span>Male: {data.employedPersons.selfEmployed.male}</span>
-              <span>Female: {data.employedPersons.selfEmployed.female}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
-          <h3 className="text-sm font-semibold text-slate-900">Livelihood</h3>
-        </div>
-        <div className="p-6 grid grid-cols-2 md:grid-cols-3 gap-2">
-          {Object.entries(data.livelihood).map(([name, count]) => (
-            count > 0 && (
-              <div key={name} className="bg-slate-50 rounded-lg p-2 flex justify-between text-sm">
-                <span>{name.replace(/([A-Z])/g, ' $1').trim()}</span>
-                <span className="font-medium">{count}</span>
-              </div>
-            )
-          ))}
-        </div>
-      </div>
-
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
-          <h3 className="text-sm font-semibold text-slate-900">Agricultural Crops (Metric Tons)</h3>
-        </div>
-        <div className="p-6 grid grid-cols-2 md:grid-cols-3 gap-2">
-          {Object.entries(data.agriculturalCrops).map(([crop, volume]) => (
-            volume > 0 && (
-              <div key={crop} className="bg-slate-50 rounded-lg p-2 flex justify-between text-sm">
-                <span>{crop.charAt(0).toUpperCase() + crop.slice(1)}</span>
-                <span className="font-medium">{volume}</span>
-              </div>
-            )
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
@@ -1656,7 +1527,7 @@ function FormH6({ data }: { data: FiscalInformation }) {
 // ============================================
 // FORM H7: Health / Education / Facilities
 // ============================================
-function FormH7({ data }: { data: Facilities }) {
+function FormH7({ data, onEdit }: { data: Facilities; onEdit: () => void }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -1664,7 +1535,10 @@ function FormH7({ data }: { data: Facilities }) {
           <h2 className="text-xl font-bold text-slate-900">Form H7: Health / Education / Facilities</h2>
           <p className="text-sm text-slate-500">Barangay facilities and services</p>
         </div>
-        <button className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2">
+        <button 
+          onClick={onEdit}
+          className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2"
+        >
           <Edit2 className="h-4 w-4" /> Edit Form
         </button>
       </div>
@@ -1710,47 +1584,6 @@ function FormH7({ data }: { data: Facilities }) {
           </div>
         </div>
       </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-          <div className="px-4 py-3 bg-slate-50 border-b border-slate-200">
-            <h3 className="text-sm font-semibold text-slate-900">Commercial Establishments</h3>
-          </div>
-          <div className="p-4 space-y-2 max-h-48 overflow-y-auto">
-            {Object.entries(data.commercialEstablishments).map(([name, count]) => (
-              <div key={name} className="flex justify-between text-sm">
-                <span>{name.replace(/([A-Z])/g, ' $1').trim()}</span>
-                <span className="font-medium">{count}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-          <div className="px-4 py-3 bg-slate-50 border-b border-slate-200">
-            <h3 className="text-sm font-semibold text-slate-900">Transportation & Utilities</h3>
-          </div>
-          <div className="p-4 space-y-2">
-            <div className="flex justify-between text-sm">
-              <span>Registered Vehicles</span>
-              <span className="font-medium">
-                {data.registeredVehicles.tricycle + data.registeredVehicles.jeepney + data.registeredVehicles.pedicabs + data.registeredVehicles.others}
-              </span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span>Households with Electricity</span>
-              <span className="font-medium">{data.communicationUtilities.householdsWithElectricity.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span>Type I Water System</span>
-              <span className="font-medium">{data.waterSupply.type1System.toLocaleString()}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span>Type II Water System</span>
-              <span className="font-medium">{data.waterSupply.type2System.toLocaleString()}</span>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
@@ -1758,7 +1591,7 @@ function FormH7({ data }: { data: Facilities }) {
 // ============================================
 // FORM H8: Basic Community Facilities
 // ============================================
-function FormH8({ data }: { data: BasicCommunityFacilities }) {
+function FormH8({ data, onEdit }: { data: BasicCommunityFacilities; onEdit: () => void }) {
   const getStatusBadge = (status: string) => {
     const colors = {
       'operational': 'bg-emerald-100 text-emerald-800',
@@ -1788,7 +1621,10 @@ function FormH8({ data }: { data: BasicCommunityFacilities }) {
           <h2 className="text-xl font-bold text-slate-900">Form H8: Basic Community Facilities</h2>
           <p className="text-sm text-slate-500">Inventory of community facilities with status</p>
         </div>
-        <button className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2">
+        <button 
+          onClick={onEdit}
+          className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2"
+        >
           <Edit2 className="h-4 w-4" /> Edit Form
         </button>
       </div>
@@ -1816,7 +1652,7 @@ function FormH8({ data }: { data: BasicCommunityFacilities }) {
 // ============================================
 // FORM H9: Barangay Officials
 // ============================================
-function FormH9({ data }: { data: BarangayOfficials }) {
+function FormH9({ data, onEdit }: { data: BarangayOfficials; onEdit: () => void }) {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -1824,7 +1660,10 @@ function FormH9({ data }: { data: BarangayOfficials }) {
           <h2 className="text-xl font-bold text-slate-900">Form H9: Barangay Officials</h2>
           <p className="text-sm text-slate-500">Barangay officials and staff</p>
         </div>
-        <button className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2">
+        <button 
+          onClick={onEdit}
+          className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2"
+        >
           <Edit2 className="h-4 w-4" /> Edit Form
         </button>
       </div>
@@ -1847,10 +1686,6 @@ function FormH9({ data }: { data: BarangayOfficials }) {
               <span className="text-sm font-medium">SK Chairperson</span>
               <span className="text-sm">{data.skChairperson}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-sm font-medium">SK Members</span>
-              <span className="text-sm">{data.skMembers.length}</span>
-            </div>
           </div>
         </div>
 
@@ -1864,45 +1699,14 @@ function FormH9({ data }: { data: BarangayOfficials }) {
               <span className="text-sm">{data.barangaySecretary}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sm font-medium">SK Secretary</span>
-              <span className="text-sm">{data.skSecretary}</span>
-            </div>
-            <div className="flex justify-between">
               <span className="text-sm font-medium">Barangay Treasurer</span>
               <span className="text-sm">{data.barangayTreasurer}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sm font-medium">SK Treasurer</span>
-              <span className="text-sm">{data.skTreasurer}</span>
+              <span className="text-sm font-medium">Barangay Tanods</span>
+              <span className="text-sm">{data.barangayTanods}</span>
             </div>
           </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Barangay Health Workers</p>
-          <p className="text-xl font-bold">{data.healthNutritionStaff.barangayHealthWorkers}</p>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Barangay Nutrition Scholars</p>
-          <p className="text-xl font-bold">{data.healthNutritionStaff.barangayNutritionScholars}</p>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Barangay Tanods</p>
-          <p className="text-xl font-bold">{data.barangayTanods}</p>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Lupong Tagapamayapa</p>
-          <p className="text-xl font-bold">{data.lupongTagapamayapa}</p>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">VAW Desk Officers</p>
-          <p className="text-xl font-bold">{data.otherBarangayStaff.barangayVAWDeskOfficer}</p>
-        </div>
-        <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm">
-          <p className="text-sm text-slate-500">Day Care Workers</p>
-          <p className="text-xl font-bold">{data.dayCareWorkers.barangay}</p>
         </div>
       </div>
     </div>
@@ -1912,16 +1716,13 @@ function FormH9({ data }: { data: BarangayOfficials }) {
 // ============================================
 // FORM H10: Barangay-Based Institutions
 // ============================================
-function FormH10({ data }: { data: BarangayBasedInstitutions }) {
+function FormH10({ data, onEdit }: { data: BarangayBasedInstitutions; onEdit: () => void }) {
   const institutions = [
     { key: 'bdc', label: 'Barangay Development Council (BDC)', members: data.bdcMembers },
     { key: 'badac', label: 'Barangay Anti-Drug Abuse Council (BADAC)', members: data.badacMembers },
     { key: 'bpoc', label: 'Barangay Peace & Order Council (BPOC)', members: data.bpocMembers },
     { key: 'bcpc', label: 'Barangay Council Protection of Children (BCPC)', members: data.bcpcMembers },
-    { key: 'beswmc', label: 'Barangay Solid Waste Management Council', members: data.beswmcMembers },
-    { key: 'bdrrmc', label: 'Barangay DRRM Committee (BDRRMC)', members: data.bdrrmcMembers },
-    { key: 'bfarmc', label: 'Barangay Fisheries & Aquatic Resources Committee', members: data.bfarmcMembers },
-    { key: 'bpfdc', label: 'Barangay Peace & Order Committee', members: data.bpfdcMembers }
+    { key: 'bdrrmc', label: 'Barangay DRRM Committee (BDRRMC)', members: data.bdrrmcMembers }
   ];
 
   return (
@@ -1931,7 +1732,10 @@ function FormH10({ data }: { data: BarangayBasedInstitutions }) {
           <h2 className="text-xl font-bold text-slate-900">Form H10: Barangay-Based Institutions</h2>
           <p className="text-sm text-slate-500">BBIs presence and membership</p>
         </div>
-        <button className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2">
+        <button 
+          onClick={onEdit}
+          className="px-4 py-2 bg-emerald-600 text-white text-sm font-medium rounded-lg hover:bg-emerald-700 transition-colors flex items-center gap-2"
+        >
           <Edit2 className="h-4 w-4" /> Edit Form
         </button>
       </div>
@@ -1952,26 +1756,6 @@ function FormH10({ data }: { data: BarangayBasedInstitutions }) {
             )}
           </div>
         ))}
-      </div>
-
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-        <div className="px-6 py-4 bg-slate-50 border-b border-slate-200">
-          <h3 className="text-sm font-semibold text-slate-900">Accredited CSOs</h3>
-        </div>
-        <div className="p-6">
-          {data.accreditedCSOs.length > 0 ? (
-            <div className="space-y-2">
-              {data.accreditedCSOs.map((cso, i) => (
-                <div key={i} className="flex justify-between items-center bg-slate-50 rounded-lg p-3">
-                  <span className="text-sm">{cso.category}</span>
-                  <span className="font-medium">{cso.quantity} organizations</span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-slate-500">No accredited CSOs reported</p>
-          )}
-        </div>
       </div>
     </div>
   );
