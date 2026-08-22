@@ -11,6 +11,8 @@ interface CaseTrackingProps {
 const mockCases: BlotterCaseData[] = [
   {
     caseNumber: "KP-2026-101",
+    blotterEntryNo: "BLOT-2026-0891",
+    dateReported: "2026-08-18",
     complainantName: "Rosalinda Mendoza",
     complainantContact: "0918-223-9011",
     complainantAddress: "Purok 1, Block 5, Sta. Lucia",
@@ -26,6 +28,8 @@ const mockCases: BlotterCaseData[] = [
   },
   {
     caseNumber: "KP-2026-102",
+    blotterEntryNo: "BLOT-2026-0892",
+    dateReported: "2026-08-19",
     complainantName: "Danilo Fernandez",
     complainantContact: "0920-888-1122",
     complainantAddress: "Purok 4, Sta. Lucia",
@@ -41,6 +45,8 @@ const mockCases: BlotterCaseData[] = [
   },
   {
     caseNumber: "KP-2026-098",
+    blotterEntryNo: "BLOT-2026-0885",
+    dateReported: "2026-08-10",
     complainantName: "Corazon Aquino-Cruz",
     complainantContact: "0917-555-4321",
     complainantAddress: "Katipunan Ext., Sta. Lucia",
@@ -64,6 +70,8 @@ export function CaseTrackingTable({ cases = mockCases }: CaseTrackingProps) {
   const filtered = cases.filter((c) => {
     const matchQuery =
       c.caseNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (c.blotterEntryNo &&
+        c.blotterEntryNo.toLowerCase().includes(searchTerm.toLowerCase())) ||
       c.complainantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       c.respondentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       c.incidentType.toLowerCase().includes(searchTerm.toLowerCase());
@@ -102,9 +110,13 @@ export function CaseTrackingTable({ cases = mockCases }: CaseTrackingProps) {
       <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="relative w-full sm:w-80">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+          <label htmlFor="case-search-input" className="sr-only">
+            Search Blotter Records
+          </label>
           <input
+            id="case-search-input"
             type="text"
-            placeholder="Search case #, complainant, respondent..."
+            placeholder="Search case #, blotter #, complainant, respondent..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011] focus:bg-white"
@@ -112,11 +124,15 @@ export function CaseTrackingTable({ cases = mockCases }: CaseTrackingProps) {
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <div className="flex items-center gap-1.5 text-xs text-slate-500">
+          <label
+            htmlFor="case-status-filter"
+            className="flex items-center gap-1.5 text-xs text-slate-500"
+          >
             <Filter className="h-3.5 w-3.5" />
             <span>Status:</span>
-          </div>
+          </label>
           <select
+            id="case-status-filter"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#580011]"
@@ -140,6 +156,7 @@ export function CaseTrackingTable({ cases = mockCases }: CaseTrackingProps) {
                 <th className="py-3 px-4">Complainant</th>
                 <th className="py-3 px-4">Respondent</th>
                 <th className="py-3 px-4">Incident Type</th>
+                <th className="py-3 px-4">Date Reported</th>
                 <th className="py-3 px-4">Priority</th>
                 <th className="py-3 px-4">Status</th>
                 <th className="py-3 px-4 text-right">Action</th>
@@ -148,18 +165,23 @@ export function CaseTrackingTable({ cases = mockCases }: CaseTrackingProps) {
             <tbody className="divide-y divide-slate-100">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-8 text-slate-400">
+                  <td colSpan={8} className="text-center py-8 text-slate-400">
                     No blotter records found.
                   </td>
                 </tr>
               ) : (
-                filtered.map((item) => (
+                filtered.map((item, index) => (
                   <tr
-                    key={item.caseNumber}
+                    key={`${item.caseNumber}-${item.blotterEntryNo ?? index}`}
                     className="hover:bg-slate-50/80 transition-colors"
                   >
                     <td className="py-3 px-4 font-mono font-bold text-slate-800">
-                      {item.caseNumber}
+                      <div>{item.caseNumber}</div>
+                      {item.blotterEntryNo && (
+                        <div className="text-[10px] font-normal text-slate-400">
+                          {item.blotterEntryNo}
+                        </div>
+                      )}
                     </td>
                     <td className="py-3 px-4 font-semibold text-slate-900">
                       {item.complainantName}
@@ -168,6 +190,9 @@ export function CaseTrackingTable({ cases = mockCases }: CaseTrackingProps) {
                       {item.respondentName}
                     </td>
                     <td className="py-3 px-4">{item.incidentType}</td>
+                    <td className="py-3 px-4 text-slate-600">
+                      {item.dateReported}
+                    </td>
                     <td className="py-3 px-4">
                       <span
                         className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
@@ -192,7 +217,7 @@ export function CaseTrackingTable({ cases = mockCases }: CaseTrackingProps) {
                     <td className="py-3 px-4 text-right">
                       <button
                         onClick={() => setActiveCase(item)}
-                        className="px-2.5 py-1 rounded bg-slate-100 hover:bg-rose-50 hover:text-[#580011] text-slate-700 text-[11px] font-semibold transition-colors inline-flex items-center gap-1"
+                        className="px-2.5 py-1 rounded bg-slate-100 hover:bg-rose-50 hover:text-[#580011] text-slate-700 text-[11px] font-semibold transition-colors inline-flex items-center gap-1 cursor-pointer"
                       >
                         <Eye className="h-3.5 w-3.5" /> Details
                       </button>
@@ -208,7 +233,7 @@ export function CaseTrackingTable({ cases = mockCases }: CaseTrackingProps) {
       {/* Case Details Modal */}
       {activeCase && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl shadow-xl max-w-xl w-full p-6 space-y-4">
+          <div className="bg-white rounded-xl shadow-xl max-w-xl w-full p-6 space-y-4 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <div className="flex items-center gap-2">
                 <div className="p-2 rounded-lg bg-rose-50 text-[#580011]">
@@ -218,14 +243,17 @@ export function CaseTrackingTable({ cases = mockCases }: CaseTrackingProps) {
                   <h3 className="text-sm font-bold text-slate-900">
                     Incident Case File: {activeCase.caseNumber}
                   </h3>
-                  <p className="text-[11px] text-slate-500">
-                    Lupon Tagapamayapa Records • Form C2
+                  <p className="text-[11px] text-slate-500 font-mono">
+                    {activeCase.blotterEntryNo
+                      ? `Entry: ${activeCase.blotterEntryNo} • `
+                      : ""}
+                    Lupon Tagapamayapa Records
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => setActiveCase(null)}
-                className="text-slate-400 hover:text-slate-600 p-1"
+                className="text-slate-400 hover:text-slate-600 p-1 cursor-pointer"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -253,7 +281,9 @@ export function CaseTrackingTable({ cases = mockCases }: CaseTrackingProps) {
                 <p className="font-bold text-slate-900">
                   {activeCase.respondentName}
                 </p>
-                <p className="text-slate-600">{activeCase.respondentAddress}</p>
+                <p className="text-slate-600">
+                  {activeCase.respondentAddress}
+                </p>
               </div>
             </div>
 
@@ -262,6 +292,12 @@ export function CaseTrackingTable({ cases = mockCases }: CaseTrackingProps) {
                 <span className="text-slate-500">Nature of Dispute:</span>
                 <span className="font-semibold text-slate-800">
                   {activeCase.incidentType}
+                </span>
+              </div>
+              <div className="flex justify-between py-1 border-b border-slate-100">
+                <span className="text-slate-500">Date Reported / Filed:</span>
+                <span className="font-semibold text-slate-800">
+                  {activeCase.dateReported}
                 </span>
               </div>
               <div className="flex justify-between py-1 border-b border-slate-100">
@@ -289,14 +325,14 @@ export function CaseTrackingTable({ cases = mockCases }: CaseTrackingProps) {
             <div className="flex justify-end gap-2 pt-3 border-t border-slate-200">
               <button
                 onClick={() => setActiveCase(null)}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg"
+                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg cursor-pointer"
               >
                 Close File
               </button>
               <button
                 type="button"
                 onClick={handlePrintCaseRecord}
-                className="px-4 py-2 rounded-lg bg-[#580011] hover:bg-[#3d000c] text-white text-xs font-semibold shadow-xs transition-colors flex items-center gap-1.5"
+                className="px-4 py-2 rounded-lg bg-[#580011] hover:bg-[#3d000c] text-white text-xs font-semibold shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
               >
                 <Printer className="h-3.5 w-3.5" />
                 Print Case Record

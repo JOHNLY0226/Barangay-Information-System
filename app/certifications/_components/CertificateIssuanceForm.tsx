@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { FileCheck, Printer, X, Sparkles, CheckCircle2 } from "lucide-react";
+import { FileCheck, Printer, X, Sparkles, CheckCircle2, ShieldCheck } from "lucide-react";
 import {
   CertificateData,
   CertificateType,
@@ -32,6 +32,7 @@ export function CertificateIssuanceForm({ onIssueSuccess }: FormProps) {
     periodOfResidency: "5 years",
   });
 
+  const [certified, setCertified] = useState(false);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
 
@@ -114,9 +115,11 @@ export function CertificateIssuanceForm({ onIssueSuccess }: FormProps) {
       <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
         <div className="flex items-center justify-between pb-4 border-b border-slate-200 mb-6">
           <div>
-            <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#580011] bg-rose-50 px-2 py-0.5 rounded">
-              DILG Form B2
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#580011] bg-rose-50 px-2.5 py-0.5 rounded border border-rose-200">
+                BIMS Form B2: Issuance Management (Certifications)
+              </span>
+            </div>
             <h2 className="text-base font-bold text-slate-900 mt-1">
               Frontline Certificate & Clearance Issuance
             </h2>
@@ -134,7 +137,7 @@ export function CertificateIssuanceForm({ onIssueSuccess }: FormProps) {
           {/* Certificate Type Selector */}
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-2">
-              Select Certificate Type
+              Select Certificate Type (Indicate Clearance / Indigency / Others)
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5">
               {(
@@ -151,7 +154,7 @@ export function CertificateIssuanceForm({ onIssueSuccess }: FormProps) {
                     key={type}
                     type="button"
                     onClick={() => handleTypeChange(type)}
-                    className={`px-3 py-2.5 text-xs font-medium rounded-lg border text-left transition-all ${
+                    className={`px-3 py-2.5 text-xs font-medium rounded-lg border text-left transition-all cursor-pointer ${
                       isSelected
                         ? "bg-[#580011] text-white border-[#580011] shadow-xs"
                         : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
@@ -171,7 +174,7 @@ export function CertificateIssuanceForm({ onIssueSuccess }: FormProps) {
             </div>
           </div>
 
-          {/* Applicant & Address Details */}
+          {/* Applicant & Address Details (Memo Top Section) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-medium text-slate-700 mb-1">
@@ -191,8 +194,7 @@ export function CertificateIssuanceForm({ onIssueSuccess }: FormProps) {
 
             <div>
               <label className="block text-xs font-medium text-slate-700 mb-1">
-                Complete Address / Purok{" "}
-                <span className="text-rose-500">*</span>
+                Complete Address / Purok <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
@@ -241,11 +243,29 @@ export function CertificateIssuanceForm({ onIssueSuccess }: FormProps) {
             </div>
           )}
 
-          {/* Purpose & Residency Info */}
+          {/* Issued Date & Purpose (Memo Fields) */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-xs font-medium text-slate-700 mb-1">
+                Issued Date (YYYY-MM-DD) <span className="text-rose-500">*</span>
+              </label>
+              <input
+                type="date"
+                required
+                value={formData.dateIssued}
+                onChange={(e) =>
+                  setFormData({ ...formData, dateIssued: e.target.value })
+                }
+                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
+              />
+              <p className="text-[10px] text-slate-400 mt-1">
+                Date submitting application.
+              </p>
+            </div>
+
             <div className="md:col-span-2">
               <label className="block text-xs font-medium text-slate-700 mb-1">
-                Specific Purpose <span className="text-rose-500">*</span>
+                Purpose <span className="text-rose-500">*</span>
               </label>
               <input
                 type="text"
@@ -254,35 +274,20 @@ export function CertificateIssuanceForm({ onIssueSuccess }: FormProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, purpose: e.target.value })
                 }
-                placeholder="e.g. Local Employment, Bank Requirement, School Admission"
+                placeholder='e.g. "for employment", "for scholarship", "for government assistance"'
                 className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
               />
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
-                Length of Stay / Residency
-              </label>
-              <input
-                type="text"
-                value={formData.periodOfResidency || ""}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    periodOfResidency: e.target.value,
-                  })
-                }
-                placeholder="e.g. 5 Years"
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
-              />
+              <p className="text-[10px] text-slate-400 mt-1">
+                Reason for requesting clearance or certificate.
+              </p>
             </div>
           </div>
 
-          {/* Official Receipt & Signatory Info */}
+          {/* Official Receipt & Fee Paid (Optional in Memo) */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-slate-100">
             <div>
               <label className="block text-xs font-medium text-slate-700 mb-1">
-                Official Receipt (O.R.) No.
+                OR Number <span className="text-slate-400 font-normal">(Optional)</span>
               </label>
               <input
                 type="text"
@@ -290,13 +295,17 @@ export function CertificateIssuanceForm({ onIssueSuccess }: FormProps) {
                 onChange={(e) =>
                   setFormData({ ...formData, orNumber: e.target.value })
                 }
+                placeholder="e.g. OR-894-101"
                 className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
               />
+              <p className="text-[10px] text-slate-400 mt-1">
+                Official Receipt number after payment.
+              </p>
             </div>
 
             <div>
               <label className="block text-xs font-medium text-slate-700 mb-1">
-                Amount Paid (₱)
+                Amount Paid (₱) <span className="text-slate-400 font-normal">(Optional)</span>
               </label>
               <input
                 type="number"
@@ -310,6 +319,9 @@ export function CertificateIssuanceForm({ onIssueSuccess }: FormProps) {
                 }
                 className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
               />
+              <p className="text-[10px] text-slate-400 mt-1">
+                Total amount paid for the clearance/certificate.
+              </p>
             </div>
 
             <div>
@@ -324,6 +336,40 @@ export function CertificateIssuanceForm({ onIssueSuccess }: FormProps) {
                 }
                 className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
               />
+              <p className="text-[10px] text-slate-400 mt-1">
+                Barangay desk officer in-charge.
+              </p>
+            </div>
+          </div>
+
+          {/* Memo Statutory Attestation & LGUSS-BIMS Data Consent */}
+          <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
+            <div className="flex items-start gap-3">
+              <input
+                id="b2-consent"
+                type="checkbox"
+                required
+                checked={certified}
+                onChange={(e) => setCertified(e.target.checked)}
+                className="h-4 w-4 mt-1 rounded accent-[#580011] shrink-0 cursor-pointer"
+              />
+              <label
+                htmlFor="b2-consent"
+                className="text-xs text-slate-800 leading-relaxed cursor-pointer select-none"
+              >
+                <span className="font-bold text-[#580011] flex items-center gap-1.5 mb-1">
+                  <ShieldCheck className="h-3.5 w-3.5 text-[#e5a623]" />
+                  Statutory Certification & LGUSS-BIMS Data Consent (Sec. 394(d)(6)):
+                </span>
+                I hereby certify that the above information are true and correct to the
+                best of my knowledge. I understand that for the Barangay to carry out its
+                mandate pursuant to Section 394 (d)(6) of the Local Government Code of 1991,
+                they must necessarily process my personal information for easy identification
+                of inhabitants, as a tool in planning, and as an updated reference in the number
+                of inhabitants of the Barangay. Therefore, I grant my consent that my data will
+                be stored in the LGUSS-BIMS which is a highly secured tool that is being used by
+                the barangay.
+              </label>
             </div>
           </div>
 
@@ -338,15 +384,16 @@ export function CertificateIssuanceForm({ onIssueSuccess }: FormProps) {
                   residentName: "",
                   purpose: "Employment Requirement",
                 }));
+                setCertified(false);
               }}
-              className="px-4 py-2 text-xs font-medium text-slate-600 hover:text-slate-800 transition-colors"
+              className="px-4 py-2 text-xs font-medium text-slate-600 hover:text-slate-800 transition-colors cursor-pointer"
             >
               Clear Fields
             </button>
 
             <button
               type="submit"
-              className="px-5 py-2.5 rounded-lg bg-[#580011] hover:bg-[#3d000c] text-white text-xs font-semibold shadow-sm transition-colors flex items-center gap-2"
+              className="px-5 py-2.5 rounded-lg bg-[#580011] hover:bg-[#3d000c] text-white text-xs font-semibold shadow-sm transition-colors flex items-center gap-2 cursor-pointer"
             >
               <FileCheck className="h-4 w-4" />
               Preview & Issue Document
@@ -377,7 +424,7 @@ export function CertificateIssuanceForm({ onIssueSuccess }: FormProps) {
               <button
                 type="button"
                 onClick={() => setIsPreviewOpen(false)}
-                className="text-slate-400 hover:text-slate-600 p-1 rounded-md"
+                className="text-slate-400 hover:text-slate-600 p-1 rounded-md cursor-pointer"
               >
                 <X className="h-5 w-5" />
               </button>
@@ -397,14 +444,14 @@ export function CertificateIssuanceForm({ onIssueSuccess }: FormProps) {
                 <button
                   type="button"
                   onClick={() => setIsPreviewOpen(false)}
-                  className="px-4 py-2 text-xs font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50"
+                  className="px-4 py-2 text-xs font-medium text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer"
                 >
                   Close Preview
                 </button>
                 <button
                   type="button"
                   onClick={handlePrintAndRecord}
-                  className="px-4 py-2 rounded-lg bg-[#e5a623] hover:bg-[#d97706] text-slate-950 text-xs font-bold shadow-sm transition-colors flex items-center gap-1.5"
+                  className="px-4 py-2 rounded-lg bg-[#e5a623] hover:bg-[#d97706] text-slate-950 text-xs font-bold shadow-sm transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
                   <Printer className="h-4 w-4" />
                   Print & Record

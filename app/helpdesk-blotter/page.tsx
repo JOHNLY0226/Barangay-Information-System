@@ -6,6 +6,7 @@ import {
   ShieldAlert,
   ArrowLeft,
   Plus,
+  FileText,
   ListFilter,
   Calendar,
   Scale,
@@ -15,6 +16,7 @@ import {
   BlotterIntakeForm,
   BlotterCaseData,
 } from "./_components/BlotterIntakeForm";
+import { CaseParticularsForm } from "./_components/CaseParticularsForm";
 import { CaseTrackingTable } from "./_components/CaseTrackingTable";
 import { SummonsScheduler } from "./_components/SummonsScheduler";
 import { ActionTakenForm } from "./_components/ActionTakenForm";
@@ -22,11 +24,14 @@ import { VawcIntakeForm } from "./_components/VawcIntakeForm";
 
 export default function HelpdeskBlotterPage() {
   const [activeTab, setActiveTab] = useState<
-    "intake" | "tracking" | "summons" | "action" | "vawc"
+    "intake" | "case" | "tracking" | "summons" | "action" | "vawc"
   >("intake");
+
   const [cases, setCases] = useState<BlotterCaseData[]>([
     {
       caseNumber: "KP-2026-101",
+      blotterEntryNo: "BLOT-2026-0891",
+      dateReported: "2026-08-18",
       complainantName: "Rosalinda Mendoza",
       complainantContact: "0918-223-9011",
       complainantAddress: "Purok 1, Block 5, Sta. Lucia",
@@ -42,6 +47,8 @@ export default function HelpdeskBlotterPage() {
     },
     {
       caseNumber: "KP-2026-102",
+      blotterEntryNo: "BLOT-2026-0892",
+      dateReported: "2026-08-19",
       complainantName: "Danilo Fernandez",
       complainantContact: "0920-888-1122",
       complainantAddress: "Purok 4, Sta. Lucia",
@@ -57,6 +64,8 @@ export default function HelpdeskBlotterPage() {
     },
     {
       caseNumber: "KP-2026-098",
+      blotterEntryNo: "BLOT-2026-0885",
+      dateReported: "2026-08-10",
       complainantName: "Corazon Aquino-Cruz",
       complainantContact: "0917-555-4321",
       complainantAddress: "Katipunan Ext., Sta. Lucia",
@@ -108,8 +117,8 @@ export default function HelpdeskBlotterPage() {
                 </span>
               </div>
               <p className="text-xs text-slate-500">
-                Katarungang Pambarangay incident logging, blotter scheduling, &
-                mediation management.
+                Katarungang Pambarangay incident logging, case particulars,
+                blotter scheduling, & mediation management.
               </p>
             </div>
           </div>
@@ -118,7 +127,7 @@ export default function HelpdeskBlotterPage() {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setActiveTab("intake")}
-            className="px-3.5 py-2 rounded-lg bg-[#580011] hover:bg-[#3d000c] text-white text-xs font-semibold shadow-xs transition-colors flex items-center gap-1.5"
+            className="px-3.5 py-2 rounded-lg bg-[#580011] hover:bg-[#3d000c] text-white text-xs font-semibold shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
           >
             <Plus className="h-4 w-4 text-[#e5a623]" /> File New Blotter
           </button>
@@ -129,7 +138,7 @@ export default function HelpdeskBlotterPage() {
       <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 pb-2">
         <button
           onClick={() => setActiveTab("intake")}
-          className={`px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 ${
+          className={`px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer ${
             activeTab === "intake"
               ? "bg-[#580011] text-white"
               : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
@@ -140,8 +149,20 @@ export default function HelpdeskBlotterPage() {
         </button>
 
         <button
+          onClick={() => setActiveTab("case")}
+          className={`px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer ${
+            activeTab === "case"
+              ? "bg-[#580011] text-white"
+              : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
+          }`}
+        >
+          <FileText className="h-3.5 w-3.5" />
+          Case Particulars (Form C2)
+        </button>
+
+        <button
           onClick={() => setActiveTab("tracking")}
-          className={`px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 ${
+          className={`px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer ${
             activeTab === "tracking"
               ? "bg-[#580011] text-white"
               : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
@@ -153,19 +174,19 @@ export default function HelpdeskBlotterPage() {
 
         <button
           onClick={() => setActiveTab("summons")}
-          className={`px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 ${
+          className={`px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer ${
             activeTab === "summons"
               ? "bg-[#580011] text-white"
               : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
           }`}
         >
           <Calendar className="h-3.5 w-3.5" />
-          Summons & Hearings (Form C2)
+          Summons & Hearings
         </button>
 
         <button
           onClick={() => setActiveTab("action")}
-          className={`px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 ${
+          className={`px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer ${
             activeTab === "action"
               ? "bg-[#580011] text-white"
               : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
@@ -177,7 +198,7 @@ export default function HelpdeskBlotterPage() {
 
         <button
           onClick={() => setActiveTab("vawc")}
-          className={`px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 ${
+          className={`px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer ${
             activeTab === "vawc"
               ? "bg-[#580011] text-white shadow-xs"
               : "bg-white text-slate-600 hover:bg-slate-100 border border-slate-200"
@@ -193,6 +214,7 @@ export default function HelpdeskBlotterPage() {
         {activeTab === "intake" && (
           <BlotterIntakeForm onCaseCreated={handleCaseCreated} />
         )}
+        {activeTab === "case" && <CaseParticularsForm />}
         {activeTab === "tracking" && <CaseTrackingTable cases={cases} />}
         {activeTab === "summons" && <SummonsScheduler />}
         {activeTab === "action" && <ActionTakenForm />}

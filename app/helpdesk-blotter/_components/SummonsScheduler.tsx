@@ -40,27 +40,44 @@ const mockSchedules: SummonsSchedule[] = [
   },
 ];
 
+const initialScheduleState: Omit<SummonsSchedule, "id"> = {
+  caseNumber: "KP-2026-101",
+  hearingStage: "1st Mediation (Pangkat)",
+  date: "2026-08-25",
+  time: "10:00 AM",
+  venue: "Barangay Session Hall A",
+  presidingOfficer: "Hon. Punong Barangay",
+  status: "Scheduled",
+};
+
 export function SummonsScheduler() {
   const [schedules, setSchedules] = useState<SummonsSchedule[]>(mockSchedules);
-  const [newSchedule, setNewSchedule] = useState<Omit<SummonsSchedule, "id">>({
-    caseNumber: "KP-2026-101",
-    hearingStage: "1st Mediation (Pangkat)",
-    date: "2026-08-25",
-    time: "10:00 AM",
-    venue: "Barangay Session Hall A",
-    presidingOfficer: "Hon. Punong Barangay",
-    status: "Scheduled",
-  });
-
+  const [newSchedule, setNewSchedule] =
+    useState<Omit<SummonsSchedule, "id">>(initialScheduleState);
+  const [scheduledCaseNo, setScheduledCaseNo] = useState("KP-2026-101");
   const [toast, setToast] = useState(false);
+
+  const getStatusBadge = (status: SummonsSchedule["status"]) => {
+    switch (status) {
+      case "Completed":
+        return "bg-emerald-50 text-emerald-700 border-emerald-200";
+      case "No Show / Rescheduled":
+        return "bg-amber-50 text-amber-800 border-amber-200";
+      case "Scheduled":
+      default:
+        return "bg-blue-50 text-blue-700 border-blue-200";
+    }
+  };
 
   const handleAddSummons = (e: React.FormEvent) => {
     e.preventDefault();
     const created: SummonsSchedule = {
-      id: `SUM-00${schedules.length + 1}`,
+      id: `SUM-${Date.now().toString().slice(-4)}`,
       ...newSchedule,
     };
+    setScheduledCaseNo(newSchedule.caseNumber);
     setSchedules([created, ...schedules]);
+    setNewSchedule(initialScheduleState);
     setToast(true);
     setTimeout(() => setToast(false), 4000);
   };
@@ -73,8 +90,8 @@ export function SummonsScheduler() {
           <div className="text-xs">
             <p className="font-bold text-slate-900">Summons Notice Scheduled</p>
             <p className="text-slate-600">
-              KP Hearing Notice for case {newSchedule.caseNumber} is logged and
-              notice to appear can be served.
+              KP Hearing Notice for case {scheduledCaseNo} is logged and notice
+              to appear can be served.
             </p>
           </div>
         </div>
@@ -85,7 +102,7 @@ export function SummonsScheduler() {
         <div className="flex items-center justify-between pb-4 border-b border-slate-200 mb-6">
           <div>
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#580011] bg-rose-50 px-2 py-0.5 rounded">
-              KP Form C2
+              KP Hearing Notice
             </span>
             <h2 className="text-base font-bold text-slate-900 mt-1">
               Summons & Conciliation Hearing Scheduler
@@ -100,10 +117,14 @@ export function SummonsScheduler() {
         <form onSubmit={handleAddSummons} className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
+              <label
+                htmlFor="summons-case-number"
+                className="block text-xs font-medium text-slate-700 mb-1"
+              >
                 Target Blotter Case Number
               </label>
               <input
+                id="summons-case-number"
                 type="text"
                 required
                 value={newSchedule.caseNumber}
@@ -116,10 +137,14 @@ export function SummonsScheduler() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
+              <label
+                htmlFor="summons-hearing-stage"
+                className="block text-xs font-medium text-slate-700 mb-1"
+              >
                 Hearing Level / Conciliation Stage
               </label>
               <select
+                id="summons-hearing-stage"
                 value={newSchedule.hearingStage}
                 onChange={(e) =>
                   setNewSchedule({
@@ -143,10 +168,14 @@ export function SummonsScheduler() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
+              <label
+                htmlFor="summons-presiding-officer"
+                className="block text-xs font-medium text-slate-700 mb-1"
+              >
                 Presiding Lupon / Hearing Officer
               </label>
               <input
+                id="summons-presiding-officer"
                 type="text"
                 required
                 value={newSchedule.presidingOfficer}
@@ -163,10 +192,14 @@ export function SummonsScheduler() {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
+              <label
+                htmlFor="summons-date"
+                className="block text-xs font-medium text-slate-700 mb-1"
+              >
                 Hearing Date
               </label>
               <input
+                id="summons-date"
                 type="date"
                 required
                 value={newSchedule.date}
@@ -178,10 +211,14 @@ export function SummonsScheduler() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
+              <label
+                htmlFor="summons-time"
+                className="block text-xs font-medium text-slate-700 mb-1"
+              >
                 Time Schedule
               </label>
               <input
+                id="summons-time"
                 type="text"
                 value={newSchedule.time}
                 onChange={(e) =>
@@ -193,10 +230,14 @@ export function SummonsScheduler() {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">
+              <label
+                htmlFor="summons-venue"
+                className="block text-xs font-medium text-slate-700 mb-1"
+              >
                 Venue / Room
               </label>
               <input
+                id="summons-venue"
                 type="text"
                 value={newSchedule.venue}
                 onChange={(e) =>
@@ -210,7 +251,7 @@ export function SummonsScheduler() {
           <div className="flex justify-end pt-2">
             <button
               type="submit"
-              className="px-4 py-2 rounded-lg bg-[#580011] hover:bg-[#3d000c] text-white text-xs font-semibold shadow-xs transition-colors flex items-center gap-1.5"
+              className="px-4 py-2 rounded-lg bg-[#580011] hover:bg-[#3d000c] text-white text-xs font-semibold shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
             >
               <Calendar className="h-4 w-4 text-[#e5a623]" />
               Schedule & Issue Summons
@@ -238,7 +279,11 @@ export function SummonsScheduler() {
                   <span className="text-xs font-semibold text-slate-800">
                     • {s.hearingStage}
                   </span>
-                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                  <span
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${getStatusBadge(
+                      s.status,
+                    )}`}
+                  >
                     {s.status}
                   </span>
                 </div>
@@ -263,7 +308,7 @@ export function SummonsScheduler() {
                 <button
                   type="button"
                   onClick={() => window.print()}
-                  className="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded text-xs font-medium transition-colors"
+                  className="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded text-xs font-medium transition-colors cursor-pointer"
                 >
                   Print KP Summons Form
                 </button>
