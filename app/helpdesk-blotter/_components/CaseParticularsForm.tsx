@@ -2,66 +2,54 @@
 
 import React, { useState } from "react";
 import {
-  Send,
+  FileCheck,
+  Printer,
   CheckCircle2,
-  AlertTriangle,
-  FileText,
+  Scale,
   Users,
+  FileText,
 } from "lucide-react";
 import { ConsentClause } from "./ConsentClause";
 
-export interface BlotterCaseData {
+interface CaseParticularsData {
   caseNumber: string;
-  blotterEntryNo?: string;
-  dateReported: string;
-  reportDateTime?: string;
+  relatedIncidents: string;
+  accomplishedDateTime: string;
+  receivingAndFilingDateTime: string;
+  natureOfComplaint: string;
+  complaintStatement: string;
+  prayer: string;
   complainantName: string;
-  complainantContact: string;
   complainantAddress: string;
   respondentName: string;
   respondentAddress: string;
   additionalComplainants?: string[];
   additionalRespondents?: string[];
-  incidentType: string;
-  incidentLocation: string;
-  incidentDateTime: string;
-  narrative: string;
-  urgency: "Normal" | "Urgent" | "High Priority";
-  status:
-    | "Open / Pending Mediation"
-    | "Scheduled for Hearing"
-    | "Settled"
-    | "Elevated / CFA";
 }
 
-interface IntakeFormProps {
-  onCaseCreated?: (newCase: BlotterCaseData) => void;
-}
-
-export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
-  const [formData, setFormData] = useState<BlotterCaseData>({
-    caseNumber: "KP-2026-105",
-    blotterEntryNo: "BLOT-2026-0894",
-    dateReported: "2026-08-21",
-    reportDateTime: "2026-08-21T09:00",
-    complainantName: "",
-    complainantContact: "",
-    complainantAddress: "Sta. Lucia, Quezon City",
-    respondentName: "",
-    respondentAddress: "Sta. Lucia, Quezon City",
+export function CaseParticularsForm() {
+  const [formData, setFormData] = useState<CaseParticularsData>({
+    caseNumber: "KP-2026-101",
+    relatedIncidents:
+      "BLOT-2026-0891 (Boundary Encroachment incident logged on Aug 18, 2026)",
+    accomplishedDateTime: "2026-08-21T10:00",
+    receivingAndFilingDateTime: "2026-08-21T10:30",
+    natureOfComplaint:
+      "Boundary Encroachment & Unauthorized Construction (Form 1.B)",
+    complaintStatement:
+      "The respondent commenced construction of a concrete perimeter structure encroaching approximately 1.5 meters into the complainant's registered boundary line without prior consent or valid building clearances.",
+    prayer:
+      "1. Immediate cessation of ongoing boundary construction.\n2. Removal/demolition of encroaching concrete firewall at respondent's expense.\n3. Restitution for damaged partition fence amounting to ₱8,500.",
+    complainantName: "Rosalinda Mendoza",
+    complainantAddress: "Purok 1, Block 5, Sta. Lucia",
+    respondentName: "Arturo Valiente",
+    respondentAddress: "Purok 1, Block 6, Sta. Lucia",
     additionalComplainants: ["", ""],
     additionalRespondents: ["", ""],
-    incidentType: "Neighborhood Dispute",
-    incidentLocation: "Purok 4, Main Alley",
-    incidentDateTime: "2026-08-18T14:30",
-    narrative: "",
-    urgency: "Normal",
-    status: "Open / Pending Mediation",
   });
 
   const [certified, setCertified] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [lastLoggedCaseNumber, setLastLoggedCaseNumber] = useState("");
+  const [isSaved, setIsSaved] = useState(false);
 
   const handleComplainantChange = (index: number, val: string) => {
     const updated = [...(formData.additionalComplainants || [])];
@@ -77,36 +65,8 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const timestampSlice = Date.now().toString().slice(-4);
-    const uniqueCaseNumber = `KP-2026-${timestampSlice}`;
-    const uniqueBlotterNumber = `BLOT-2026-${timestampSlice}`;
-    const submissionData: BlotterCaseData = {
-      ...formData,
-      caseNumber: uniqueCaseNumber,
-      blotterEntryNo: uniqueBlotterNumber,
-      dateReported:
-        formData.dateReported ||
-        formData.reportDateTime?.split("T")[0] ||
-        "2026-08-21",
-    };
-
-    if (onCaseCreated) {
-      onCaseCreated(submissionData);
-    }
-
-    setLastLoggedCaseNumber(uniqueCaseNumber);
-    setSubmitted(true);
-    setCertified(false);
-    setFormData((prev) => ({
-      ...prev,
-      complainantName: "",
-      complainantContact: "",
-      respondentName: "",
-      narrative: "",
-      additionalComplainants: ["", ""],
-      additionalRespondents: ["", ""],
-    }));
-    setTimeout(() => setSubmitted(false), 5000);
+    setIsSaved(true);
+    setTimeout(() => setIsSaved(false), 4500);
   };
 
   return (
@@ -116,147 +76,212 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
         <div>
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#580011] bg-rose-50 px-2.5 py-0.5 rounded border border-rose-200">
-              BIMS Form C1: KPISBH - Incident
+              BIMS Form C2: KPISBH - Case
             </span>
             <span className="text-[10px] font-bold text-slate-500">
-              Katarungang Pambarangay Incident Intake & Blotter Register
+              Katarungang Pambarangay Formal Case Particulars & Docket
             </span>
           </div>
           <h2 className="text-base font-bold text-slate-900 mt-1">
-            Incident Intake / Blotter Logging
+            Formal Case Filing & Complaint Particulars
           </h2>
           <p className="text-xs text-slate-500">
-            Provide the unique incident identifier, date/time particulars,
-            detailed narrative, and involved parties.
+            Provide the unique Case Number, related incidents, filing dates,
+            complaint description, relief/prayer sought, and involved parties.
           </p>
         </div>
-        <span className="text-xs font-mono font-bold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
-          Incident: {lastLoggedCaseNumber || formData.caseNumber}
-        </span>
+        <div className="p-2 rounded-lg bg-rose-50 text-[#580011]">
+          <Scale className="h-6 w-6" />
+        </div>
       </div>
 
-      {submitted && (
+      {isSaved && (
         <div className="bg-emerald-50 border border-[#10b981] p-4 rounded-xl flex items-center gap-3 text-slate-800 shadow-sm">
           <CheckCircle2 className="h-5 w-5 text-[#10b981] shrink-0" />
           <div className="text-xs">
             <p className="font-bold text-slate-900">
-              Incident Successfully Recorded
+              BIMS Form C2 Case Filed Successfully
             </p>
             <p className="text-slate-600">
-              Incident {lastLoggedCaseNumber} has been logged in accordance with
-              BIMS Form C1.
+              Case {formData.caseNumber} has been officially docketed into the
+              Katarungang Pambarangay registry.
             </p>
           </div>
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Memo Top Meta: Incident Identifier & Dates Table Block */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 bg-slate-50 border border-slate-200 rounded-xl">
+        {/* Memo Meta & Dates Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-slate-50 border border-slate-200 rounded-xl">
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1 flex items-center gap-1.5">
               <FileText className="h-3.5 w-3.5 text-[#580011]" />
-              Incident Number (System / Manual)
+              Case Number <span className="text-rose-500">*</span>
             </label>
             <input
               type="text"
-              readOnly
+              required
               value={formData.caseNumber}
-              className="w-full px-3 py-2 bg-slate-100 border border-slate-200 rounded-lg text-xs font-mono font-bold text-[#580011] cursor-not-allowed"
-            />
-            <p className="text-[10px] text-slate-400 mt-1">
-              Unique identifier for the incident.
-            </p>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
-              Incident Date & Time <span className="text-rose-500">*</span>
-            </label>
-            <input
-              type="datetime-local"
-              required
-              value={formData.incidentDateTime}
               onChange={(e) =>
-                setFormData({ ...formData, incidentDateTime: e.target.value })
+                setFormData({ ...formData, caseNumber: e.target.value })
               }
-              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
+              placeholder="e.g. KP-2026-101"
+              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-mono font-bold text-slate-800 focus:outline-none focus:ring-1 focus:ring-[#580011]"
             />
             <p className="text-[10px] text-slate-400 mt-1">
-              Exact date and time when incident occurred.
+              Unique identifier assigned to the case.
             </p>
           </div>
 
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
-              Report Date & Time <span className="text-rose-500">*</span>
+              Accomplished Date & Time <span className="text-rose-500">*</span>
             </label>
             <input
               type="datetime-local"
               required
-              value={
-                formData.reportDateTime || `${formData.dateReported}T09:00`
-              }
+              value={formData.accomplishedDateTime}
               onChange={(e) =>
                 setFormData({
                   ...formData,
-                  reportDateTime: e.target.value,
-                  dateReported: e.target.value.split("T")[0],
+                  accomplishedDateTime: e.target.value,
                 })
               }
               className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
             />
             <p className="text-[10px] text-slate-400 mt-1">
-              Date and time when report is being made.
+              Date when case form was completed.
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
+              Receiving & Filing Date <span className="text-rose-500">*</span>
+            </label>
+            <input
+              type="datetime-local"
+              required
+              value={formData.receivingAndFilingDateTime}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  receivingAndFilingDateTime: e.target.value,
+                })
+              }
+              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
+            />
+            <p className="text-[10px] text-slate-400 mt-1">
+              Date received and officially filed.
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
+              For (Nature of Complaint) <span className="text-rose-500">*</span>
+            </label>
+            <input
+              type="text"
+              required
+              value={formData.natureOfComplaint}
+              onChange={(e) =>
+                setFormData({ ...formData, natureOfComplaint: e.target.value })
+              }
+              placeholder="e.g. Property Dispute (Form 1.B)"
+              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
+            />
+            <p className="text-[10px] text-slate-400 mt-1">
+              Specify type/nature (BIMS Form 1.B).
             </p>
           </div>
         </div>
 
-        {/* Narrative Section */}
+        {/* Related Incident/s */}
         <div>
           <div className="flex items-center justify-between mb-1">
             <label className="block text-xs font-semibold uppercase tracking-wider text-slate-800">
-              Narrative (Detailed Description){" "}
+              Related Incident/s
+            </label>
+            <span className="text-[11px] text-slate-400">
+              Provide incident numbers or descriptions connected to this case.
+            </span>
+          </div>
+          <input
+            type="text"
+            value={formData.relatedIncidents}
+            onChange={(e) =>
+              setFormData({ ...formData, relatedIncidents: e.target.value })
+            }
+            placeholder="e.g. BLOT-2026-0891, BLOT-2026-0711"
+            className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
+          />
+        </div>
+
+        {/* Complaint (Detailed Description) */}
+        <div>
+          <div className="flex items-center justify-between mb-1">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-800">
+              Complaint (Detailed Description){" "}
               <span className="text-rose-500">*</span>
             </label>
             <span className="text-[11px] text-slate-400">
-              Include key facts, events leading up to incident, and actions
-              taken.
+              Include relevant facts, circumstances, and supporting information.
             </span>
           </div>
           <textarea
             required
             rows={4}
-            value={formData.narrative}
+            value={formData.complaintStatement}
             onChange={(e) =>
-              setFormData({ ...formData, narrative: e.target.value })
+              setFormData({ ...formData, complaintStatement: e.target.value })
             }
-            placeholder="Provide a detailed description of the incident. Include key facts, sequence of events, and remedies sought..."
+            placeholder="Provide a detailed description of the complaint..."
             className="w-full p-3 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
           />
         </div>
 
-        {/* Memo: Involved Parties (Complainants vs Respondents 1 to 5) */}
+        {/* Prayer (Relief Sought) */}
+        <div>
+          <div className="flex items-center justify-between mb-1">
+            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-800">
+              Prayer (Relief / Action Sought){" "}
+              <span className="text-rose-500">*</span>
+            </label>
+            <span className="text-[11px] text-slate-400">
+              State what you are asking for (specific actions or resolutions).
+            </span>
+          </div>
+          <textarea
+            required
+            rows={3}
+            value={formData.prayer}
+            onChange={(e) =>
+              setFormData({ ...formData, prayer: e.target.value })
+            }
+            placeholder="State what you are asking for in relation to the complaint..."
+            className="w-full p-3 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
+          />
+        </div>
+
+        {/* Memo: Involved Section (Complainants 1-5 & Respondents 1-5) */}
         <div className="p-4 bg-slate-50/80 border border-slate-200 rounded-xl space-y-4">
           <div className="flex items-center justify-between border-b border-slate-200 pb-2">
             <div className="flex items-center gap-2">
               <Users className="h-4 w-4 text-[#580011]" />
               <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900">
-                Involved Parties (Complainants & Respondents)
+                Involved Parties in Case (Complainants & Respondents)
               </h3>
             </div>
             <span className="text-[11px] text-slate-500">
-              Provide list of all individuals or entities involved (up to 5
-              entries).
+              List individuals or entities involved (up to 5 entries per side).
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Complainant(s) Column */}
+            {/* Complainants Column */}
             <div className="space-y-3">
               <div className="flex items-center justify-between bg-rose-50 p-2 rounded-lg border border-rose-100">
                 <span className="text-xs font-bold uppercase tracking-wider text-[#580011]">
-                  Complainant(s) / Nagsusumbong
+                  Complainant(s)
                 </span>
                 <span className="text-[10px] font-semibold text-rose-700 bg-white px-2 py-0.5 rounded border border-rose-200">
                   Complainant 1 (Primary)
@@ -278,19 +303,17 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
                       complainantName: e.target.value,
                     })
                   }
-                  placeholder="Full Name (e.g. Maria Teresa Santos)"
+                  placeholder="Full Name of Complainant"
                   className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
                 />
               </div>
 
               <div>
                 <label className="block text-[11px] font-medium text-slate-700 mb-1">
-                  Primary Complainant Address{" "}
-                  <span className="text-rose-500">*</span>
+                  Address of Complainant
                 </label>
                 <input
                   type="text"
-                  required
                   value={formData.complainantAddress}
                   onChange={(e) =>
                     setFormData({
@@ -298,25 +321,7 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
                       complainantAddress: e.target.value,
                     })
                   }
-                  placeholder="Complete Address in Sta. Lucia"
-                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
-                />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-medium text-slate-700 mb-1">
-                  Primary Complainant Contact Number
-                </label>
-                <input
-                  type="text"
-                  value={formData.complainantContact}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      complainantContact: e.target.value,
-                    })
-                  }
-                  placeholder="0917-XXX-XXXX"
+                  placeholder="Address in Barangay Sta. Lucia"
                   className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
                 />
               </div>
@@ -337,7 +342,7 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
                       onChange={(e) =>
                         handleComplainantChange(idx, e.target.value)
                       }
-                      placeholder={`Complainant ${idx + 2} Full Name (Optional)`}
+                      placeholder={`Complainant ${idx + 2} Name`}
                       className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
                     />
                   </div>
@@ -345,11 +350,11 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
               </div>
             </div>
 
-            {/* Respondent(s) Column */}
+            {/* Respondents Column */}
             <div className="space-y-3">
               <div className="flex items-center justify-between bg-slate-100 p-2 rounded-lg border border-slate-200">
                 <span className="text-xs font-bold uppercase tracking-wider text-slate-800">
-                  Respondent(s) / Ipinagsusumbong
+                  Respondent(s)
                 </span>
                 <span className="text-[10px] font-semibold text-slate-700 bg-white px-2 py-0.5 rounded border border-slate-200">
                   Respondent 1 (Primary)
@@ -368,19 +373,17 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
                   onChange={(e) =>
                     setFormData({ ...formData, respondentName: e.target.value })
                   }
-                  placeholder="Full Name / Alias (e.g. Rodrigo 'Digoy' Cruz)"
+                  placeholder="Full Name of Respondent"
                   className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
                 />
               </div>
 
               <div>
                 <label className="block text-[11px] font-medium text-slate-700 mb-1">
-                  Primary Respondent Address / Location{" "}
-                  <span className="text-rose-500">*</span>
+                  Address of Respondent
                 </label>
                 <input
                   type="text"
-                  required
                   value={formData.respondentAddress}
                   onChange={(e) =>
                     setFormData({
@@ -388,53 +391,9 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
                       respondentAddress: e.target.value,
                     })
                   }
-                  placeholder="Known Address / Location"
+                  placeholder="Address / Location"
                   className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
                 />
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-medium text-slate-700 mb-1">
-                  Nature / Urgency Classification
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  <select
-                    value={formData.incidentType}
-                    onChange={(e) =>
-                      setFormData({ ...formData, incidentType: e.target.value })
-                    }
-                    className="w-full px-2.5 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
-                  >
-                    <option value="Neighborhood Dispute">
-                      Neighborhood Dispute
-                    </option>
-                    <option value="Unjust Vexation">Unjust Vexation</option>
-                    <option value="Property Damage">Property Damage</option>
-                    <option value="Physical Injuries (Slight)">
-                      Physical Injuries
-                    </option>
-                    <option value="Unpaid Debt / Estafa (Small Claim)">
-                      Unpaid Debt
-                    </option>
-                    <option value="Noise Disturbance">Noise Disturbance</option>
-                    <option value="Others">Others</option>
-                  </select>
-
-                  <select
-                    value={formData.urgency}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        urgency: e.target.value as BlotterCaseData["urgency"],
-                      })
-                    }
-                    className="w-full px-2.5 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
-                  >
-                    <option value="Normal">Normal Mediation</option>
-                    <option value="Urgent">Urgent</option>
-                    <option value="High Priority">High Priority</option>
-                  </select>
-                </div>
               </div>
 
               {/* Additional Respondents 2 to 5 */}
@@ -453,7 +412,7 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
                       onChange={(e) =>
                         handleRespondentChange(idx, e.target.value)
                       }
-                      placeholder={`Respondent ${idx + 2} Full Name (Optional)`}
+                      placeholder={`Respondent ${idx + 2} Name`}
                       className="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
                     />
                   </div>
@@ -463,7 +422,7 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
           </div>
         </div>
 
-        {/* Memo Statutory Attestation & LGUSS-BIMS Consent Clause */}
+        {/* Statutory Attestation & LGUSS-BIMS Consent Clause */}
         <ConsentClause
           checked={certified}
           onChange={setCertified}
@@ -471,22 +430,21 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
           required
         />
 
-        {/* Submit Bar */}
-        <div className="flex items-center justify-between pt-4 border-t border-slate-200">
-          <div className="flex items-center gap-1.5 text-slate-500 text-xs">
-            <AlertTriangle className="h-4 w-4 text-[#e5a623]" />
-            <span>
-              Complies with Katarungang Pambarangay Law (RA 7160 Sec 399-422) &
-              BIMS Form C1
-            </span>
-          </div>
-
+        {/* Submit & Action Controls */}
+        <div className="flex items-center justify-end gap-2 pt-4 border-t border-slate-200">
+          <button
+            type="button"
+            onClick={() => window.print()}
+            className="px-4 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer"
+          >
+            <Printer className="h-4 w-4" /> Print BIMS Form C2
+          </button>
           <button
             type="submit"
-            className="px-5 py-2.5 rounded-lg bg-[#580011] hover:bg-[#3d000c] text-white text-xs font-semibold shadow-sm transition-colors flex items-center gap-2 cursor-pointer"
+            className="px-5 py-2.5 rounded-lg bg-[#580011] hover:bg-[#3d000c] text-white text-xs font-semibold shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
           >
-            <Send className="h-4 w-4 text-[#e5a623]" /> File BIMS Form C1
-            Incident
+            <FileCheck className="h-4 w-4 text-[#e5a623]" />
+            Save BIMS Form C2 Case
           </button>
         </div>
       </form>
