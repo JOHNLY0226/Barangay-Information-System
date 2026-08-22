@@ -103,6 +103,7 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
       complainantContact: "",
       respondentName: "",
       narrative: "",
+      incidentLocation: "Purok 4, Main Alley",
       additionalComplainants: ["", ""],
       additionalRespondents: ["", ""],
     }));
@@ -151,14 +152,18 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Memo Top Meta: Incident Identifier & Dates Table Block */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 bg-slate-50 border border-slate-200 rounded-xl">
+        {/* Memo Top Meta: Incident Identifier, Dates & Location Table Block */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-slate-50 border border-slate-200 rounded-xl">
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1 flex items-center gap-1.5">
+            <label
+              htmlFor="c1-incident-number"
+              className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1 flex items-center gap-1.5"
+            >
               <FileText className="h-3.5 w-3.5 text-[#580011]" />
               Incident Number (System / Manual)
             </label>
             <input
+              id="c1-incident-number"
               type="text"
               readOnly
               value={formData.caseNumber}
@@ -170,10 +175,14 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
+            <label
+              htmlFor="c1-incident-datetime"
+              className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1"
+            >
               Incident Date & Time <span className="text-rose-500">*</span>
             </label>
             <input
+              id="c1-incident-datetime"
               type="datetime-local"
               required
               value={formData.incidentDateTime}
@@ -188,10 +197,14 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
+            <label
+              htmlFor="c1-report-datetime"
+              className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1"
+            >
               Report Date & Time <span className="text-rose-500">*</span>
             </label>
             <input
+              id="c1-report-datetime"
               type="datetime-local"
               required
               value={
@@ -210,12 +223,38 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
               Date and time when report is being made.
             </p>
           </div>
+
+          <div>
+            <label
+              htmlFor="c1-incident-location"
+              className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1"
+            >
+              Place of Incident / Location <span className="text-rose-500">*</span>
+            </label>
+            <input
+              id="c1-incident-location"
+              type="text"
+              required
+              value={formData.incidentLocation}
+              onChange={(e) =>
+                setFormData({ ...formData, incidentLocation: e.target.value })
+              }
+              placeholder="e.g. Purok 4, Main Alley"
+              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
+            />
+            <p className="text-[10px] text-slate-400 mt-1">
+              Exact place or sitio where incident occurred.
+            </p>
+          </div>
         </div>
 
         {/* Narrative Section */}
         <div>
           <div className="flex items-center justify-between mb-1">
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-800">
+            <label
+              htmlFor="c1-narrative"
+              className="block text-xs font-semibold uppercase tracking-wider text-slate-800"
+            >
               Narrative (Detailed Description){" "}
               <span className="text-rose-500">*</span>
             </label>
@@ -225,6 +264,7 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
             </span>
           </div>
           <textarea
+            id="c1-narrative"
             required
             rows={4}
             value={formData.narrative}
@@ -264,11 +304,15 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                <label
+                  htmlFor="c1-complainant-name"
+                  className="block text-[11px] font-semibold text-slate-700 mb-1"
+                >
                   1. Primary Complainant Name{" "}
                   <span className="text-rose-500">*</span>
                 </label>
                 <input
+                  id="c1-complainant-name"
                   type="text"
                   required
                   value={formData.complainantName}
@@ -284,11 +328,15 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
               </div>
 
               <div>
-                <label className="block text-[11px] font-medium text-slate-700 mb-1">
+                <label
+                  htmlFor="c1-complainant-address"
+                  className="block text-[11px] font-medium text-slate-700 mb-1"
+                >
                   Primary Complainant Address{" "}
                   <span className="text-rose-500">*</span>
                 </label>
                 <input
+                  id="c1-complainant-address"
                   type="text"
                   required
                   value={formData.complainantAddress}
@@ -304,10 +352,14 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
               </div>
 
               <div>
-                <label className="block text-[11px] font-medium text-slate-700 mb-1">
+                <label
+                  htmlFor="c1-complainant-contact"
+                  className="block text-[11px] font-medium text-slate-700 mb-1"
+                >
                   Primary Complainant Contact Number
                 </label>
                 <input
+                  id="c1-complainant-contact"
                   type="text"
                   value={formData.complainantContact}
                   onChange={(e) =>
@@ -328,10 +380,14 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
                 </p>
                 {[0, 1, 2, 3].map((idx) => (
                   <div key={idx} className="flex items-center gap-2">
-                    <span className="text-[11px] font-bold text-slate-400 w-4">
+                    <label
+                      htmlFor={`c1-additional-complainant-${idx}`}
+                      className="text-[11px] font-bold text-slate-400 w-4"
+                    >
                       {idx + 2}.
-                    </span>
+                    </label>
                     <input
+                      id={`c1-additional-complainant-${idx}`}
                       type="text"
                       value={formData.additionalComplainants?.[idx] || ""}
                       onChange={(e) =>
@@ -357,11 +413,15 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                <label
+                  htmlFor="c1-respondent-name"
+                  className="block text-[11px] font-semibold text-slate-700 mb-1"
+                >
                   1. Primary Respondent Name{" "}
                   <span className="text-rose-500">*</span>
                 </label>
                 <input
+                  id="c1-respondent-name"
                   type="text"
                   required
                   value={formData.respondentName}
@@ -374,11 +434,15 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
               </div>
 
               <div>
-                <label className="block text-[11px] font-medium text-slate-700 mb-1">
+                <label
+                  htmlFor="c1-respondent-address"
+                  className="block text-[11px] font-medium text-slate-700 mb-1"
+                >
                   Primary Respondent Address / Location{" "}
                   <span className="text-rose-500">*</span>
                 </label>
                 <input
+                  id="c1-respondent-address"
                   type="text"
                   required
                   value={formData.respondentAddress}
@@ -394,11 +458,15 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
               </div>
 
               <div>
-                <label className="block text-[11px] font-medium text-slate-700 mb-1">
+                <label
+                  htmlFor="c1-incident-type"
+                  className="block text-[11px] font-medium text-slate-700 mb-1"
+                >
                   Nature / Urgency Classification
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   <select
+                    id="c1-incident-type"
                     value={formData.incidentType}
                     onChange={(e) =>
                       setFormData({ ...formData, incidentType: e.target.value })
@@ -421,6 +489,8 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
                   </select>
 
                   <select
+                    id="c1-urgency"
+                    aria-label="Urgency Level"
                     value={formData.urgency}
                     onChange={(e) =>
                       setFormData({
@@ -444,10 +514,14 @@ export function BlotterIntakeForm({ onCaseCreated }: IntakeFormProps) {
                 </p>
                 {[0, 1, 2, 3].map((idx) => (
                   <div key={idx} className="flex items-center gap-2">
-                    <span className="text-[11px] font-bold text-slate-400 w-4">
+                    <label
+                      htmlFor={`c1-additional-respondent-${idx}`}
+                      className="text-[11px] font-bold text-slate-400 w-4"
+                    >
                       {idx + 2}.
-                    </span>
+                    </label>
                     <input
+                      id={`c1-additional-respondent-${idx}`}
                       type="text"
                       value={formData.additionalRespondents?.[idx] || ""}
                       onChange={(e) =>

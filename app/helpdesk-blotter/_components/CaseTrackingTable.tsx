@@ -70,7 +70,8 @@ export function CaseTrackingTable({ cases = mockCases }: CaseTrackingProps) {
   const filtered = cases.filter((c) => {
     const matchQuery =
       c.caseNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (c.blotterEntryNo && c.blotterEntryNo.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (c.blotterEntryNo &&
+        c.blotterEntryNo.toLowerCase().includes(searchTerm.toLowerCase())) ||
       c.complainantName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       c.respondentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       c.incidentType.toLowerCase().includes(searchTerm.toLowerCase());
@@ -109,7 +110,11 @@ export function CaseTrackingTable({ cases = mockCases }: CaseTrackingProps) {
       <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
         <div className="relative w-full sm:w-80">
           <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+          <label htmlFor="case-search-input" className="sr-only">
+            Search Blotter Records
+          </label>
           <input
+            id="case-search-input"
             type="text"
             placeholder="Search case #, blotter #, complainant, respondent..."
             value={searchTerm}
@@ -119,11 +124,15 @@ export function CaseTrackingTable({ cases = mockCases }: CaseTrackingProps) {
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <div className="flex items-center gap-1.5 text-xs text-slate-500">
+          <label
+            htmlFor="case-status-filter"
+            className="flex items-center gap-1.5 text-xs text-slate-500"
+          >
             <Filter className="h-3.5 w-3.5" />
             <span>Status:</span>
-          </div>
+          </label>
           <select
+            id="case-status-filter"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
             className="px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-medium text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#580011]"
@@ -161,9 +170,9 @@ export function CaseTrackingTable({ cases = mockCases }: CaseTrackingProps) {
                   </td>
                 </tr>
               ) : (
-                filtered.map((item) => (
+                filtered.map((item, index) => (
                   <tr
-                    key={item.caseNumber}
+                    key={`${item.caseNumber}-${item.blotterEntryNo ?? index}`}
                     className="hover:bg-slate-50/80 transition-colors"
                   >
                     <td className="py-3 px-4 font-mono font-bold text-slate-800">
@@ -182,7 +191,7 @@ export function CaseTrackingTable({ cases = mockCases }: CaseTrackingProps) {
                     </td>
                     <td className="py-3 px-4">{item.incidentType}</td>
                     <td className="py-3 px-4 text-slate-600">
-                      {item.dateReported || "2026-08-18"}
+                      {item.dateReported}
                     </td>
                     <td className="py-3 px-4">
                       <span
@@ -235,7 +244,9 @@ export function CaseTrackingTable({ cases = mockCases }: CaseTrackingProps) {
                     Incident Case File: {activeCase.caseNumber}
                   </h3>
                   <p className="text-[11px] text-slate-500 font-mono">
-                    {activeCase.blotterEntryNo ? `Entry: ${activeCase.blotterEntryNo} • ` : ""}
+                    {activeCase.blotterEntryNo
+                      ? `Entry: ${activeCase.blotterEntryNo} • `
+                      : ""}
                     Lupon Tagapamayapa Records
                   </p>
                 </div>
@@ -270,7 +281,9 @@ export function CaseTrackingTable({ cases = mockCases }: CaseTrackingProps) {
                 <p className="font-bold text-slate-900">
                   {activeCase.respondentName}
                 </p>
-                <p className="text-slate-600">{activeCase.respondentAddress}</p>
+                <p className="text-slate-600">
+                  {activeCase.respondentAddress}
+                </p>
               </div>
             </div>
 
@@ -284,7 +297,7 @@ export function CaseTrackingTable({ cases = mockCases }: CaseTrackingProps) {
               <div className="flex justify-between py-1 border-b border-slate-100">
                 <span className="text-slate-500">Date Reported / Filed:</span>
                 <span className="font-semibold text-slate-800">
-                  {activeCase.dateReported || "2026-08-18"}
+                  {activeCase.dateReported}
                 </span>
               </div>
               <div className="flex justify-between py-1 border-b border-slate-100">

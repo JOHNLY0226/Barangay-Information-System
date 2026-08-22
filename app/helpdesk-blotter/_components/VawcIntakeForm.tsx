@@ -15,6 +15,9 @@ export function VawcIntakeForm() {
   const [incidentNumber] = useState("VAWC-2026-042");
   const [incidentDateTime, setIncidentDateTime] = useState("2026-08-20T19:30");
   const [reportDateTime, setReportDateTime] = useState("2026-08-21T09:00");
+  const [incidentLocation, setIncidentLocation] = useState(
+    "Sta. Lucia, Quezon City",
+  );
   const [vawcType, setVawcType] = useState<string>(
     "Violence Against Women and Children",
   );
@@ -109,14 +112,18 @@ export function VawcIntakeForm() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Memo Top Meta: Incident Identifier & Dates Table Block */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 bg-rose-50/40 border border-rose-200/60 rounded-xl">
+        {/* Memo Top Meta: Incident Identifier, Dates & Place Table Block */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4 bg-rose-50/40 border border-rose-200/60 rounded-xl">
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-[#580011] mb-1 flex items-center gap-1.5">
+            <label
+              htmlFor="d1-incident-number"
+              className="block text-xs font-semibold uppercase tracking-wider text-[#580011] mb-1 flex items-center gap-1.5"
+            >
               <ShieldCheck className="h-3.5 w-3.5 text-[#580011]" />
               Incident Number (Auto-Assigned)
             </label>
             <input
+              id="d1-incident-number"
               type="text"
               readOnly
               value={incidentNumber}
@@ -128,10 +135,14 @@ export function VawcIntakeForm() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
+            <label
+              htmlFor="d1-incident-datetime"
+              className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1"
+            >
               Incident Date & Time <span className="text-rose-500">*</span>
             </label>
             <input
+              id="d1-incident-datetime"
               type="datetime-local"
               required
               value={incidentDateTime}
@@ -144,10 +155,14 @@ export function VawcIntakeForm() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
+            <label
+              htmlFor="d1-report-datetime"
+              className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1"
+            >
               Report Date & Time <span className="text-rose-500">*</span>
             </label>
             <input
+              id="d1-report-datetime"
               type="datetime-local"
               required
               value={reportDateTime}
@@ -156,6 +171,26 @@ export function VawcIntakeForm() {
             />
             <p className="text-[10px] text-slate-400 mt-1">
               Date and time when report is being made.
+            </p>
+          </div>
+
+          <div>
+            <label
+              htmlFor="d1-incident-location"
+              className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1"
+            >
+              Place of Incident
+            </label>
+            <input
+              id="d1-incident-location"
+              type="text"
+              value={incidentLocation}
+              onChange={(e) => setIncidentLocation(e.target.value)}
+              placeholder="e.g. Sta. Lucia, Quezon City"
+              className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
+            />
+            <p className="text-[10px] text-slate-400 mt-1">
+              Location where incident occurred (optional).
             </p>
           </div>
         </div>
@@ -201,7 +236,10 @@ export function VawcIntakeForm() {
         {/* Narrative Section */}
         <div>
           <div className="flex items-center justify-between mb-1">
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-800">
+            <label
+              htmlFor="d1-narrative"
+              className="block text-xs font-semibold uppercase tracking-wider text-slate-800"
+            >
               Narrative (Detailed Description){" "}
               <span className="text-rose-500">*</span>
             </label>
@@ -211,6 +249,7 @@ export function VawcIntakeForm() {
             </span>
           </div>
           <textarea
+            id="d1-narrative"
             required
             rows={4}
             value={narrative}
@@ -247,11 +286,15 @@ export function VawcIntakeForm() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                <label
+                  htmlFor="d1-victim-name"
+                  className="block text-[11px] font-semibold text-slate-700 mb-1"
+                >
                   1. Primary Victim Full Name / Pseudonym{" "}
                   <span className="text-rose-500">*</span>
                 </label>
                 <input
+                  id="d1-victim-name"
                   type="text"
                   required
                   value={victimName}
@@ -263,21 +306,31 @@ export function VawcIntakeForm() {
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[11px] font-medium text-slate-700 mb-1">
+                  <label
+                    htmlFor="d1-victim-age"
+                    className="block text-[11px] font-medium text-slate-700 mb-1"
+                  >
                     Age
                   </label>
                   <input
+                    id="d1-victim-age"
                     type="number"
+                    min={0}
+                    max={120}
                     value={victimAge}
                     onChange={(e) => setVictimAge(e.target.value)}
                     className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#580011]"
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-medium text-slate-700 mb-1">
+                  <label
+                    htmlFor="d1-case-officer"
+                    className="block text-[11px] font-medium text-slate-700 mb-1"
+                  >
                     Assigned VAW Officer
                   </label>
                   <input
+                    id="d1-case-officer"
                     type="text"
                     value={caseOfficer}
                     onChange={(e) => setCaseOfficer(e.target.value)}
@@ -287,10 +340,14 @@ export function VawcIntakeForm() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-medium text-slate-700 mb-1">
+                <label
+                  htmlFor="d1-victim-address"
+                  className="block text-[11px] font-medium text-slate-700 mb-1"
+                >
                   Victim Address
                 </label>
                 <input
+                  id="d1-victim-address"
                   type="text"
                   value={victimAddress}
                   onChange={(e) => setVictimAddress(e.target.value)}
@@ -306,10 +363,14 @@ export function VawcIntakeForm() {
                 </p>
                 {[0, 1, 2, 3].map((idx) => (
                   <div key={idx} className="flex items-center gap-2">
-                    <span className="text-[11px] font-bold text-slate-400 w-4">
+                    <label
+                      htmlFor={`d1-additional-complainant-${idx}`}
+                      className="text-[11px] font-bold text-slate-400 w-4"
+                    >
                       {idx + 2}.
-                    </span>
+                    </label>
                     <input
+                      id={`d1-additional-complainant-${idx}`}
                       type="text"
                       value={additionalComplainants[idx] || ""}
                       onChange={(e) =>
@@ -335,11 +396,15 @@ export function VawcIntakeForm() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                <label
+                  htmlFor="d1-perpetrator-name"
+                  className="block text-[11px] font-semibold text-slate-700 mb-1"
+                >
                   1. Primary Respondent Name{" "}
                   <span className="text-rose-500">*</span>
                 </label>
                 <input
+                  id="d1-perpetrator-name"
                   type="text"
                   required
                   value={perpetratorName}
@@ -350,10 +415,14 @@ export function VawcIntakeForm() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-medium text-slate-700 mb-1">
+                <label
+                  htmlFor="d1-relationship"
+                  className="block text-[11px] font-medium text-slate-700 mb-1"
+                >
                   Relationship to Victim
                 </label>
                 <input
+                  id="d1-relationship"
                   type="text"
                   value={relationship}
                   onChange={(e) => setRelationship(e.target.value)}
@@ -363,10 +432,14 @@ export function VawcIntakeForm() {
               </div>
 
               <div>
-                <label className="block text-[11px] font-medium text-slate-700 mb-1">
+                <label
+                  htmlFor="d1-perpetrator-address"
+                  className="block text-[11px] font-medium text-slate-700 mb-1"
+                >
                   Respondent Known Address
                 </label>
                 <input
+                  id="d1-perpetrator-address"
                   type="text"
                   value={perpetratorAddress}
                   onChange={(e) => setPerpetratorAddress(e.target.value)}
@@ -382,10 +455,14 @@ export function VawcIntakeForm() {
                 </p>
                 {[0, 1, 2, 3].map((idx) => (
                   <div key={idx} className="flex items-center gap-2">
-                    <span className="text-[11px] font-bold text-slate-400 w-4">
+                    <label
+                      htmlFor={`d1-additional-respondent-${idx}`}
+                      className="text-[11px] font-bold text-slate-400 w-4"
+                    >
                       {idx + 2}.
-                    </span>
+                    </label>
                     <input
+                      id={`d1-additional-respondent-${idx}`}
                       type="text"
                       value={additionalRespondents[idx] || ""}
                       onChange={(e) =>
@@ -405,12 +482,16 @@ export function VawcIntakeForm() {
         <div className="p-3.5 bg-amber-50 rounded-xl border border-amber-200 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-amber-700 shrink-0" />
-            <span className="text-xs font-semibold text-slate-800">
+            <label
+              htmlFor="d1-bpo-requested"
+              className="text-xs font-semibold text-slate-800 cursor-pointer"
+            >
               Issue Immediate Barangay Protection Order (BPO - 15 Days Emergency
               Relief)
-            </span>
+            </label>
           </div>
           <input
+            id="d1-bpo-requested"
             type="checkbox"
             checked={bpoRequested}
             onChange={(e) => setBpoRequested(e.target.checked)}
@@ -431,8 +512,8 @@ export function VawcIntakeForm() {
             type="submit"
             className="px-5 py-2.5 rounded-lg bg-[#580011] hover:bg-[#3d000c] text-white text-xs font-bold shadow-sm transition-colors flex items-center gap-2 cursor-pointer"
           >
-            <UserCheck className="h-4 w-4 text-[#e5a623]" /> Save Protected BIMS
-            Form D1 Record
+            <UserCheck className="h-4 w-4 text-[#e5a623]" /> Save Protected
+            BIMS Form D1 Record
           </button>
         </div>
       </form>

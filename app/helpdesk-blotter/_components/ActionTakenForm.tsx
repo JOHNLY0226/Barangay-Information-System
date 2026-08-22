@@ -51,7 +51,9 @@ export function ActionTakenForm() {
             Official Action Taken / Settlement Record
           </h2>
           <p className="text-xs text-slate-500">
-            Provide the referenced Case Number, narrative description of action taken, specific action outcome (BIMS Form 1.C), and execution date/time.
+            Provide the referenced Case Number, narrative description of action
+            taken, specific action outcome (BIMS Form 1.C), and execution
+            date/time.
           </p>
         </div>
         <div className="p-2 rounded-lg bg-rose-50 text-[#580011]">
@@ -67,7 +69,8 @@ export function ActionTakenForm() {
               BIMS Form C3 Action Taken Recorded
             </p>
             <p className="text-slate-600">
-              {actionType} officially attached to Case {caseNo} and registered into the dispute archive.
+              {actionType} officially attached to Case {caseNo} and registered
+              into the dispute archive.
             </p>
           </div>
         </div>
@@ -77,11 +80,15 @@ export function ActionTakenForm() {
         {/* Memo Meta & Action Selector Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 bg-slate-50 border border-slate-200 rounded-xl">
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1 flex items-center gap-1.5">
+            <label
+              htmlFor="c3-case-number"
+              className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1 flex items-center gap-1.5"
+            >
               <FileText className="h-3.5 w-3.5 text-[#580011]" />
               Case Number <span className="text-rose-500">*</span>
             </label>
             <input
+              id="c3-case-number"
               type="text"
               required
               value={caseNo}
@@ -95,10 +102,14 @@ export function ActionTakenForm() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
+            <label
+              htmlFor="c3-action-type"
+              className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1"
+            >
               Action Taken (Form 1.C) <span className="text-rose-500">*</span>
             </label>
             <select
+              id="c3-action-type"
               value={actionType}
               onChange={(e) =>
                 setActionType(e.target.value as typeof actionType)
@@ -124,10 +135,14 @@ export function ActionTakenForm() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1">
+            <label
+              htmlFor="c3-datetime-action"
+              className="block text-xs font-semibold uppercase tracking-wider text-slate-700 mb-1"
+            >
               Date and Time <span className="text-rose-500">*</span>
             </label>
             <input
+              id="c3-datetime-action"
               type="datetime-local"
               required
               value={dateTimeAction}
@@ -142,11 +157,15 @@ export function ActionTakenForm() {
 
         {actionType === "Certification to File Action (CFA)" && (
           <div className="p-4 bg-rose-50 border border-rose-200 rounded-xl text-xs text-slate-800 space-y-1.5">
-            <div className="flex items-center gap-2 text-[#9f1239] font-bold">
-              <AlertOctagon className="h-4 w-4" /> Certification to File Action Endorsement
+            <div className="flex items-center gap-2 text-[#580011] font-bold">
+              <AlertOctagon className="h-4 w-4" /> Certification to File Action
+              Endorsement
             </div>
             <p className="leading-relaxed">
-              This certification confirms that personal confrontation between parties failed before the Lupon Tagapamayapa and conciliation efforts have been legally exhausted. This clears the matter for formal judicial / police filing.
+              This certification confirms that personal confrontation between
+              parties failed before the Lupon Tagapamayapa and conciliation
+              efforts have been legally exhausted. This clears the matter for
+              formal judicial / police filing.
             </p>
           </div>
         )}
@@ -154,14 +173,20 @@ export function ActionTakenForm() {
         {/* Narrative (Detailed Description) */}
         <div>
           <div className="flex items-center justify-between mb-1">
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-800">
-              Narrative (Detailed Description of Action Taken) <span className="text-rose-500">*</span>
+            <label
+              htmlFor="c3-narrative"
+              className="block text-xs font-semibold uppercase tracking-wider text-slate-800"
+            >
+              Narrative (Detailed Description of Action Taken){" "}
+              <span className="text-rose-500">*</span>
             </label>
             <span className="text-[11px] text-slate-400">
-              Include key facts, events leading up to action, terms agreed, and resolutions.
+              Include key facts, events leading up to action, terms agreed, and
+              resolutions.
             </span>
           </div>
           <textarea
+            id="c3-narrative"
             required
             rows={4}
             value={narrative}
@@ -172,10 +197,14 @@ export function ActionTakenForm() {
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-slate-700 mb-1">
+          <label
+            htmlFor="c3-officer-name"
+            className="block text-xs font-medium text-slate-700 mb-1"
+          >
             Presiding Lupon / Officer Name & Designation
           </label>
           <input
+            id="c3-officer-name"
             type="text"
             value={officerName}
             onChange={(e) => setOfficerName(e.target.value)}
@@ -204,7 +233,8 @@ export function ActionTakenForm() {
             type="submit"
             className="px-5 py-2.5 rounded-lg bg-[#580011] hover:bg-[#3d000c] text-white text-xs font-semibold shadow-xs transition-colors flex items-center gap-1.5 cursor-pointer"
           >
-            <FileCheck className="h-4 w-4 text-[#e5a623]" /> Save BIMS Form C3 Record
+            <FileCheck className="h-4 w-4 text-[#e5a623]" /> Save BIMS Form C3
+            Record
           </button>
         </div>
       </form>
