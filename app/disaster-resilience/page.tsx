@@ -614,7 +614,7 @@ export default function BDRISPage() {
           setFilterStatus={setFilterStatus}
           onAdd={handleAddIncident}
           onEdit={handleEditIncident}
-          onDelete={(id) => { setDeletingId(id); setDeletingType('incident'); setIsDeleteConfirmOpen(true); }}
+          onDelete={(id: number) => { setDeletingId(id); setDeletingType('incident'); setIsDeleteConfirmOpen(true); }}
           onUpdateStatus={handleUpdateIncidentStatus}
           natureOptions={NATURE_OF_COMPLAINT_OPTIONS}
           actionOptions={ACTION_OPTIONS}
@@ -624,7 +624,7 @@ export default function BDRISPage() {
           trainings={trainings}
           onAdd={handleAddTraining}
           onEdit={handleEditTraining}
-          onDelete={(id) => { setDeletingId(id); setDeletingType('training'); setIsDeleteConfirmOpen(true); }}
+          onDelete={(id: number) => { setDeletingId(id); setDeletingType('training'); setIsDeleteConfirmOpen(true); }}
           trainingTitles={TRAINING_TITLES}
         />;
       case 'evacuation':
@@ -632,14 +632,14 @@ export default function BDRISPage() {
           evacuations={evacuations}
           onAdd={handleAddEvacuation}
           onEdit={handleEditEvacuation}
-          onDelete={(id) => { setDeletingId(id); setDeletingType('evacuation'); setIsDeleteConfirmOpen(true); }}
+          onDelete={(id: number) => { setDeletingId(id); setDeletingType('evacuation'); setIsDeleteConfirmOpen(true); }}
         />;
       case 'resources':
         return <ResourcesTab 
           resources={resources}
           onAdd={handleAddResource}
           onEdit={handleEditResource}
-          onDelete={(id) => { setDeletingId(id); setDeletingType('resource'); setIsDeleteConfirmOpen(true); }}
+          onDelete={(id: number) => { setDeletingId(id); setDeletingType('resource'); setIsDeleteConfirmOpen(true); }}
         />;
       default:
         return <div>Select a tab</div>;
@@ -802,15 +802,15 @@ export default function BDRISPage() {
                 <div className="border border-slate-200 rounded-lg p-4">
                   <h4 className="text-sm font-semibold text-slate-700 mb-2">Complainant</h4>
                   <div className="space-y-2">
-                    <input type="text" placeholder="Name" value={incidentFormData.complainant?.name || ''} onChange={(e) => setIncidentFormData({ ...incidentFormData, complainant: { ...incidentFormData.complainant, name: e.target.value } })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
-                    <input type="text" placeholder="Address" value={incidentFormData.complainant?.address || ''} onChange={(e) => setIncidentFormData({ ...incidentFormData, complainant: { ...incidentFormData.complainant, address: e.target.value } })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                    <input type="text" placeholder="Name" value={incidentFormData.complainant?.name || ''} onChange={(e) => setIncidentFormData({ ...incidentFormData, complainant: { name: e.target.value, address: incidentFormData.complainant?.address || '' } })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                    <input type="text" placeholder="Address" value={incidentFormData.complainant?.address || ''} onChange={(e) => setIncidentFormData({ ...incidentFormData, complainant: { name: incidentFormData.complainant?.name || '', address: e.target.value } })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                   </div>
                 </div>
                 <div className="border border-slate-200 rounded-lg p-4">
                   <h4 className="text-sm font-semibold text-slate-700 mb-2">Respondent</h4>
                   <div className="space-y-2">
-                    <input type="text" placeholder="Name" value={incidentFormData.respondent?.name || ''} onChange={(e) => setIncidentFormData({ ...incidentFormData, respondent: { ...incidentFormData.respondent, name: e.target.value } })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
-                    <input type="text" placeholder="Address" value={incidentFormData.respondent?.address || ''} onChange={(e) => setIncidentFormData({ ...incidentFormData, respondent: { ...incidentFormData.respondent, address: e.target.value } })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                    <input type="text" placeholder="Name" value={incidentFormData.respondent?.name || ''} onChange={(e) => setIncidentFormData({ ...incidentFormData, respondent: { name: e.target.value, address: incidentFormData.respondent?.address || '' } })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                    <input type="text" placeholder="Address" value={incidentFormData.respondent?.address || ''} onChange={(e) => setIncidentFormData({ ...incidentFormData, respondent: { name: incidentFormData.respondent?.name || '', address: e.target.value } })} className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                   </div>
                 </div>
               </div>
