@@ -124,9 +124,8 @@ export default function Sidebar({ isOpen = true, onClose }: SidebarProps) {
 
       {/* Sidebar Container: Clean Light Slate bg-[#F1F5F9] / bg-slate-100 with border-r border-slate-200 */}
       <aside
-        className={`fixed lg:static inset-y-0 left-0 z-30 w-64 bg-[#F1F5F9] border-r border-slate-200 flex flex-col justify-between shrink-0 transform transition-transform duration-200 ease-in-out ${
-          isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-        } pt-16 lg:pt-0`}
+        className={`fixed lg:static inset-y-0 left-0 z-30 w-64 bg-[#F1F5F9] border-r border-slate-200 flex flex-col justify-between shrink-0 transform transition-transform duration-200 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+          } pt-16 lg:pt-0`}
       >
         {/* Sidebar Header Section */}
         <div className="flex flex-col flex-1 overflow-y-auto px-3 py-4">
@@ -153,32 +152,29 @@ export default function Sidebar({ isOpen = true, onClose }: SidebarProps) {
                   key={item.href}
                   href={item.href}
                   onClick={onClose}
-                  className={`group relative flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${
-                    isActive
+                  className={`group relative flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-medium transition-all ${isActive
                       ? "bg-[#580011] text-white shadow-sm font-semibold"
                       : "text-slate-700 hover:bg-slate-200"
-                  }`}
+                    }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     <Icon
-                      className={`h-4 w-4 shrink-0 transition-colors ${
-                        isActive
+                      className={`h-4 w-4 shrink-0 transition-colors ${isActive
                           ? "text-[#E5A623]" // Dandelion Yellow active icon
                           : "text-slate-500 group-hover:text-[#580011]"
-                      }`}
+                        }`}
                     />
                     <span className="truncate">{item.name}</span>
                   </div>
 
                   <div className="flex items-center gap-1.5 shrink-0 ml-1">
                     <span
-                      className={`text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded ${
-                        item.badgeColor
+                      className={`text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded ${item.badgeColor
                           ? item.badgeColor
                           : isActive
-                          ? "bg-[#3D000C] text-[#E5A623] border border-[#7A0018]"
-                          : "bg-slate-200 text-slate-600 group-hover:bg-slate-300"
-                      }`}
+                            ? "bg-[#3D000C] text-[#E5A623] border border-[#7A0018]"
+                            : "bg-slate-200 text-slate-600 group-hover:bg-slate-300"
+                        }`}
                     >
                       {item.code}
                     </span>
